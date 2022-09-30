@@ -1,15 +1,15 @@
 #include <stdio.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
+#include "obj_mesh.h";
+#include "shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include "obj_mesh.h"
 #include "skybox.h"
-#include "shader.h"
 
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
@@ -73,7 +73,7 @@ int main() {
 	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Normal Shaders
-	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_fragment.shader");
+	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_normal_fragment.shader");
 	glUseProgram(shaderProgram);
 
 	GLuint simpleShader = LoadShaders("Shaders/vertex.shader", "Shaders/fragment.shader");
@@ -169,8 +169,8 @@ int main() {
 			projection = glm::ortho(-ratio - zoomFactor, ratio + zoomFactor, -1.0f - zoomFactor, 1.0f + zoomFactor, -20.1f, 60.0f);
 		}
 
-			// Set projection matrix in shader
-			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		// Set projection matrix in shader
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 #pragma endregion
 
@@ -208,7 +208,7 @@ int main() {
 
 		//-----draw Sun-----
 		glBindVertexArray(planet.vaoId);
-		glUseProgram(simpleShader);
+		glUseProgram(shaderProgram);
 
 		// transforms
 		trans = glm::mat4(1.0f); // identity
@@ -240,7 +240,7 @@ int main() {
 		glUniform3f(ambientColorLoc, 0.2f, 0.2f, 0.2f);
 
 		//-----draw Earth-----
-		
+
 		glBindVertexArray(planet.vaoId);
 
 		// transforms
@@ -303,7 +303,7 @@ int main() {
 		}
 		prevTime = currentTime;
 
-		glUseProgram(simpleShader);
+		glUseProgram(shaderProgram);
 
 
 		//--- stop drawing here ---
