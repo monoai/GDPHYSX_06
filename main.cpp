@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <stdlib.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #include "glm/glm.hpp"
@@ -10,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "skybox.h"
+#include "glm/gtx/string_cast.hpp"
 
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
@@ -121,10 +123,9 @@ int main() {
 
 	//Camera vec vars
 	//Perspective Vecs
-	glm::vec3 eye = glm::vec3(0.0f, 0.0f, 6.0f);
-	glm::vec3 center = glm::vec3(trans[3][0], trans[3][1], trans[3][2]);
+	glm::vec3 eye = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 center = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
 	bool ortho = false;
 	float test = 1.0f;
 
@@ -177,7 +178,8 @@ int main() {
 #pragma region View
 		glm::mat4 view;
 
-
+		view = glm::lookAt(eye, eye + center, up);
+		/*
 		if (ortho == false) {
 			view = glm::lookAt(
 				glm::vec3(0.0f, 10.0f, -20.0f),
@@ -193,8 +195,15 @@ int main() {
 				up
 			);
 		}
+		*/
 		glUniform3f(cameraPosLoc, eye.x, eye.y, eye.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		std::cout << "Eye\t" << glm::to_string(eye) << std::endl;
+		std::cout << "Center\t" << glm::to_string(center) << std::endl;
+		std::cout << "Up\t" << glm::to_string(up) << std::endl;
+
+
 #pragma endregion
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -314,19 +323,41 @@ int main() {
 		glfwPollEvents();
 
 		//Perspective
+		
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			ortho = false;
 			eye = glm::vec3(0.0f, 0.0f, 6.0f);
-			center = glm::vec3(trans[1][0], trans[1][1], trans[1][2]);
+			center = glm::vec3(0.0f, 0.0f, -1.0f);
 			up = glm::vec3(0.0f, 1.0f, 0.0f);
 		}
 		//Orthographic
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 			ortho = true;
 			eye = glm::vec3(0.0f, -10.0f, 0.0f);
-			center = glm::vec3(trans[0][0], trans[0][1] + 60.0f, trans[0][2]);
+			center = glm::vec3(0.1f, 60.0f, 0.2f);
 			up = glm::vec3(0.0f, 1.0f, 0.0f);
 		}
+		
+		float camSpeed = 0.05f;
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+			eye += camSpeed * center;
+		}
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+			eye -= camSpeed * center;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+			eye -= glm::normalize(glm::cross(center, up)) * camSpeed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+			eye += glm::normalize(glm::cross(center, up)) * camSpeed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+			eye += camSpeed * up;
+		}
+		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+			eye -= camSpeed * up;
+		}
+
 	}
 	return 0;
 }
