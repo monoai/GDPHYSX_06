@@ -14,6 +14,15 @@
 #include "skybox.h"
 #include "glm/gtx/string_cast.hpp"
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+// Global variables
+float forceFactor = 0.0f;
+//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
+float gravity = 0.05f;
+bool forceEnabled = false;
+bool gravityEnabled = false;
+
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
 #pragma region Initialization
@@ -127,19 +136,20 @@ int main() {
 	float dT = 1.0f / 60.0f;
 
 	// var for Physics
-	float currPos = 0.0f;
-	float forceFactor = 0.0f;
-	float gravFactor = 0.0f;
-	bool forceEnabled = false;
-	bool gravityEnabled = false;
+	float xPos = 0.0f;
+	float yPos = 0.0f;
+	float xVel = 0.0f;
+	float yVel = 0.0f;
 
 	//Camera vec vars
 	//Perspective Vecs
-	glm::vec3 eye = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 eye = glm::vec3(0.0f, 0.0f, 55.0f);
 	glm::vec3 center = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 	float test = 1.0f;
+
+	glfwSetKeyCallback(window, key_callback);
 
 	//depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -233,7 +243,7 @@ int main() {
 
 		// transforms
 		trans = glm::mat4(1.0f); // identity
-		trans = glm::translate(trans, glm::vec3(currPos, 0.0f, 0.0f)); // matrix * translate_matrix
+		trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f)); // matrix * translate_matrix
 		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
 		trans = glm::scale(trans, glm::vec3(1.5f, 1.5f, 1.5f));
 
@@ -274,12 +284,18 @@ int main() {
 			frameTime -= deltaTime;
 
 			// Place what you want under here
-			if(forceFactor>0.0f && forceEnabled == true) {
-				currPos += forceFactor;
+			if(forceEnabled == true) {
+				//xVel *= forceFactor;
+				xPos += forceFactor;
+			}
+			if(gravityEnabled == true) {
+				yVel -= gravity;
+				yPos += yVel;
 			}
 
 			// Desperate debug values
-			std::cout << "currPos: " << currPos << std::endl;
+			std::cout << "xPos: " << xPos << std::endl;
+			std::cout << "yPos: " << yPos << std::endl;
 			std::cout << "forceFactor: " << forceFactor << std::endl;
 		}
 
@@ -293,12 +309,21 @@ int main() {
 		// Q - Reset
 		if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
 			// Reset Position
-			currPos = 0.0f;
-			trans = glm::translate(trans, glm::vec3(currPos, 0.0f, 0.0f));
+			xPos = 0.0f;
+			yPos = 0.0f;
+			xVel = 0.0f;
+			yVel = 0.0f;
+			trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f));
+			// Reset Force and Gravity
+			//forceFactor = 0.0f;
+			//forceEnabled = false;
+		}
+		if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 			// Reset Force and Gravity
 			forceFactor = 0.0f;
 			forceEnabled = false;
 		}
+		/*
 		// W - Force
 		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 			forceFactor+=0.01f;
@@ -306,7 +331,9 @@ int main() {
 		}
 		// E - Gravity
 		if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+			gravityEnabled = !gravityEnabled;
 		}
+		*/
 
 		/*
 		//Perspective
@@ -324,6 +351,7 @@ int main() {
 			center = glm::vec3(0.1f, 60.0f, 0.2f);
 			up = glm::vec3(0.0f, 1.0f, 0.0f);
 		}
+		*/
 		
 		float camSpeed = 0.05f;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
@@ -344,7 +372,18 @@ int main() {
 		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 			eye -= camSpeed * up;
 		}
-		*/
 	}
 	return 0;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+	// W - Force
+	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		forceFactor+=0.01f;
+		forceEnabled = true;
+	}
+	// E - Gravity
+	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		gravityEnabled = !gravityEnabled;
+	}	
 }
