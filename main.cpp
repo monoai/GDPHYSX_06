@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <stdlib.h>
+#include <algorithm>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #include "glm/glm.hpp"
@@ -110,6 +111,8 @@ int main() {
 
 #pragma endregion
 
+#pragma region Preloop Preparations
+
 	// set bg color to green
 	glClearColor(0.4f, 0.4f, 0.0f, 0.0f);
 
@@ -117,9 +120,18 @@ int main() {
 	float rotFactor = 0.0f;
 	float xFactor = 0.0f;
 	float xSpeed = 1.0f;
+
+	// var for Time
 	float currentTime = glfwGetTime();
 	float prevTime = 0.0f;
-	float deltaTime = 0.0f;
+	float dT = 1.0f / 60.0f;
+
+	// var for Physics
+	float currPos = 0.0f;
+	float forceFactor = 0.0f;
+	float gravFactor = 0.0f;
+	bool forceEnabled = false;
+	bool gravityEnabled = false;
 
 	//Camera vec vars
 	//Perspective Vecs
@@ -221,7 +233,7 @@ int main() {
 
 		// transforms
 		trans = glm::mat4(1.0f); // identity
-		trans = glm::translate(trans, glm::vec3(0.0f, 0.0f, 0.0f)); // matrix * translate_matrix
+		trans = glm::translate(trans, glm::vec3(currPos, 0.0f, 0.0f)); // matrix * translate_matrix
 		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
 		trans = glm::scale(trans, glm::vec3(1.5f, 1.5f, 1.5f));
 
@@ -250,6 +262,26 @@ int main() {
 
 		glUseProgram(shaderProgram);
 
+		// Update Loop
+		// Loops via deltaTime and the Semi-fixed timestep design
+		//currentTime = glfwGetTime();
+		//deltaTime = currentTime - prevTime;
+		float newTime = glfwGetTime();
+		float frameTime = newTime - currentTime;
+		currentTime = newTime;
+		while(frameTime >0.0f) {
+			float deltaTime = std::min(frameTime, dT);
+			frameTime -= deltaTime;
+
+			// Place what you want under here
+			if(forceFactor>0.0f && forceEnabled == true) {
+				currPos += forceFactor;
+			}
+
+			// Desperate debug values
+			std::cout << "currPos: " << currPos << std::endl;
+			std::cout << "forceFactor: " << forceFactor << std::endl;
+		}
 
 		//--- stop drawing here ---
 #pragma endregion
@@ -257,7 +289,26 @@ int main() {
 		glfwSwapBuffers(window);
 		//listen for glfw input events
 		glfwPollEvents();
+		
+		// Q - Reset
+		if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+			// Reset Position
+			currPos = 0.0f;
+			trans = glm::translate(trans, glm::vec3(currPos, 0.0f, 0.0f));
+			// Reset Force and Gravity
+			forceFactor = 0.0f;
+			forceEnabled = false;
+		}
+		// W - Force
+		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			forceFactor+=0.01f;
+			forceEnabled = true;
+		}
+		// E - Gravity
+		if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		}
 
+		/*
 		//Perspective
 		
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
@@ -293,7 +344,7 @@ int main() {
 		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 			eye -= camSpeed * up;
 		}
-
+		*/
 	}
 	return 0;
 }
