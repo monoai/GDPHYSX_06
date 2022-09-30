@@ -2,6 +2,11 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#ifdef _WIN32
+// don't include anything
+#else
+#include <sys/stat.h>
+#endif
 
 struct VertexData {
 	glm::vec3 position;
