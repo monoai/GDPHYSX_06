@@ -222,7 +222,7 @@ int main() {
 		// transforms
 		trans = glm::mat4(1.0f); // identity
 		trans = glm::translate(trans, glm::vec3(0.0f, 0.0f, 0.0f)); // matrix * translate_matrix
-		trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
+		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
 		trans = glm::scale(trans, glm::vec3(1.5f, 1.5f, 1.5f));
 
 		//send to shader
@@ -244,73 +244,9 @@ int main() {
 		glUseProgram(shaderProgram);
 
 		//place lighting
-		glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
+		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
 
-		glUniform3f(ambientColorLoc, 0.2f, 0.2f, 0.2f);
-
-		//-----draw Earth-----
-
-		glBindVertexArray(planet.vaoId);
-
-		// transforms
-		//trans = glm::mat4(1.0f); // identity
-		trans = glm::translate(trans, glm::vec3(-9.0f, 0.0f, 0.0f)); // matrix * translate_matrix
-		trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
-		trans = glm::scale(trans, glm::vec3(0.6f, 0.6f, 0.6f));
-
-		//send to shader
-		normalTrans = glm::transpose(glm::inverse(trans));
-		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-		glActiveTexture(GL_TEXTURE0);
-		GLuint earthTexture = planet.textures[planet.materials[1].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, earthTexture);
-
-		//drawbackpack
-		glDrawElements(GL_TRIANGLES, planet.numFaces, GL_UNSIGNED_INT, (void*)0);
-
-		//unbindtexture after rendering
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		//-----draw Moon-----
-		glBindVertexArray(planet.vaoId);
-
-		// transforms
-		//trans = glm::mat4(1.0f); // identity
-		trans = glm::translate(trans, glm::vec3(-5.0f, 0.0f, 0.0f)); // matrix * translate_matrix
-		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
-		trans = glm::scale(trans, glm::vec3(0.3f, 0.3f, 0.3f));
-		//send to shader
-		normalTrans = glm::transpose(glm::inverse(trans));
-		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-		glActiveTexture(GL_TEXTURE0);
-		GLuint moonTexture = planet.textures[planet.materials[2].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, moonTexture);
-
-		//drawbackpack
-		glDrawElements(GL_TRIANGLES, planet.numFaces, GL_UNSIGNED_INT, (void*)0);
-
-		//unbindtexture after rendering
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		// incerement rotation by deltaTime
-		currentTime = glfwGetTime();
-		deltaTime = currentTime - prevTime;
-		xFactor += deltaTime * xSpeed;
-		if (xFactor > 1.0f) {
-			xSpeed = -1.0f;
-		}
-		else if (xFactor < -1.0f) {
-			xSpeed = 1.0f;
-		}
-		rotFactor += (deltaTime * 0.2f) * 360.0f;
-		if (rotFactor > 360.0f) {
-			rotFactor -= 360.0f;
-		}
-		prevTime = currentTime;
+		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
 		glUseProgram(shaderProgram);
 
