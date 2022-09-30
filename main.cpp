@@ -18,8 +18,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 // Global variables
 float forceFactor = 0.0f;
-//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
-float gravity = 0.05f;
 bool forceEnabled = false;
 bool gravityEnabled = false;
 
@@ -120,15 +118,10 @@ int main() {
 
 #pragma endregion
 
-#pragma region Preloop Preparations
+#pragma region Prerender Preparations
 
 	// set bg color to green
-	glClearColor(0.4f, 0.4f, 0.0f, 0.0f);
-
-	// var for rotations
-	float rotFactor = 0.0f;
-	float xFactor = 0.0f;
-	float xSpeed = 1.0f;
+	glClearColor(0.4f, 0.4f, 0.0f, 0.0f);//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
 
 	// var for Time
 	float currentTime = glfwGetTime();
@@ -140,10 +133,12 @@ int main() {
 	float yPos = 0.0f;
 	float xVel = 0.0f;
 	float yVel = 0.0f;
+	//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
+	float gravity = 0.05f;
 
 	//Camera vec vars
 	//Perspective Vecs
-	glm::vec3 eye = glm::vec3(0.0f, 0.0f, 55.0f);
+	glm::vec3 eye = glm::vec3(60.0f, 0.0f, 55.0f);
 	glm::vec3 center = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
@@ -221,9 +216,9 @@ int main() {
 		glUniform3f(cameraPosLoc, eye.x, eye.y, eye.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		std::cout << "Eye\t" << glm::to_string(eye) << std::endl;
-		std::cout << "Center\t" << glm::to_string(center) << std::endl;
-		std::cout << "Up\t" << glm::to_string(up) << std::endl;
+		//std::cout << "Eye\t" << glm::to_string(eye) << std::endl;
+		//std::cout << "Center\t" << glm::to_string(center) << std::endl;
+		//std::cout << "Up\t" << glm::to_string(up) << std::endl;
 
 
 #pragma endregion
@@ -245,7 +240,7 @@ int main() {
 		trans = glm::mat4(1.0f); // identity
 		trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f)); // matrix * translate_matrix
 		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
-		trans = glm::scale(trans, glm::vec3(1.5f, 1.5f, 1.5f));
+		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		//send to shader
 		normalTrans = glm::transpose(glm::inverse(trans));
@@ -315,23 +310,15 @@ int main() {
 			yVel = 0.0f;
 			trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f));
 			// Reset Force and Gravity
-			//forceFactor = 0.0f;
-			//forceEnabled = false;
+			forceFactor = 0.0f;
+			forceEnabled = false;
+			gravityEnabled = false;
 		}
+		/*
 		if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
 			// Reset Force and Gravity
 			forceFactor = 0.0f;
 			forceEnabled = false;
-		}
-		/*
-		// W - Force
-		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			forceFactor+=0.01f;
-			forceEnabled = true;
-		}
-		// E - Gravity
-		if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-			gravityEnabled = !gravityEnabled;
 		}
 		*/
 
@@ -353,6 +340,7 @@ int main() {
 		}
 		*/
 		
+		/* Camera Controls
 		float camSpeed = 0.05f;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 			eye += camSpeed * center;
@@ -372,6 +360,7 @@ int main() {
 		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 			eye -= camSpeed * up;
 		}
+		*/
 	}
 	return 0;
 }
@@ -379,7 +368,7 @@ int main() {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	// W - Force
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		forceFactor+=0.01f;
+		forceFactor+=0.1f;
 		forceEnabled = true;
 	}
 	// E - Gravity
