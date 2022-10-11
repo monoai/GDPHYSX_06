@@ -1,4 +1,6 @@
 #pragma once
+#ifndef OBJ_MESH_H
+#define OBJ_MESH_H
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -7,6 +9,9 @@
 #else
 #include <sys/stat.h>
 #endif
+#include <iostream>
+#include <vector>
+#include <map>
 
 struct VertexData {
 	glm::vec3 position;
@@ -252,3 +257,5 @@ void LoadObjToMemory(ObjData* objData, GLfloat scaleFactor, GLfloat tOffset[]) {
 
 	objData->vaoId = VAO;
 }
+
+#endif /* OBJ_MESH_H */

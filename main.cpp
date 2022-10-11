@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "skybox.h"
 #include "glm/gtx/string_cast.hpp"
+#include "particle.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -236,29 +237,7 @@ int main() {
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
 
-		// transforms
-		trans = glm::mat4(1.0f); // identity
-		trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f)); // matrix * translate_matrix
-		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
-		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
-
-		//send to shader
-		normalTrans = glm::transpose(glm::inverse(trans));
-		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-		glActiveTexture(GL_TEXTURE0);
-		GLuint sunTexture = planet.textures[planet.materials[0].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, sunTexture);
-
-		//drawbackpack
-		glDrawElements(GL_TRIANGLES, planet.numFaces, GL_UNSIGNED_INT, (void*)0);
-
-		//unbindtexture after rendering
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		//Re-use normal shaders
-		glUseProgram(shaderProgram);
+		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
