@@ -2,11 +2,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "obj_mesh.h"
+
 particle::particle(glm::mat4* trans, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) {
 	*trans = glm::mat4(1.0f);
 	*trans = glm::translate(*trans, glm::vec3(0.0f,0.0f,0.0f));
-	*trans = glm::rotate(*trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
-	*trans = glm::scale(*trans, glm::vec3(0.0f,0.0f,0.0f));
+	//*trans = glm::rotate(*trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
+	*trans = glm::scale(*trans, glm::vec3(1.0f,1.0f,1.0f));
 
 	glm::mat4 normalTrans = glm::transpose(glm::inverse(*trans));
 	glUniformMatrix4fv(*normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));

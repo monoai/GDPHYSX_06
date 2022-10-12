@@ -2,8 +2,11 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
-#include "GL/glew.h"
+#include <GL/glew.h>
 #include <glm/glm.hpp>
+//#include "obj_mesh.h"
+
+struct ObjData;
 
 class particle {
 	public:
@@ -11,4 +14,4 @@ class particle {
 	private:
 };
 
-#endif /* PARTICLE_H */
+#endif

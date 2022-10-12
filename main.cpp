@@ -6,6 +6,7 @@
 #include <algorithm>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "glm/glm.hpp"
 #include "obj_mesh.h"
 #include "shader.h"
@@ -55,11 +56,12 @@ int main() {
 
 
 #pragma region Mesh Loading
+	obj_mesh mesh; // Initialize class
 
 	ObjData planet;
-	LoadObjFile(&planet, "planets/Earth.obj");
+	mesh.LoadObjFile(&planet, "planets/Earth.obj");
 	GLfloat earthOffsets[] = { 0.0f, 0.0f, 0.0f };
-	LoadObjToMemory(
+	mesh.LoadObjToMemory(
 		&planet,
 		1.0f,
 		earthOffsets
@@ -268,9 +270,9 @@ int main() {
 			}
 
 			// Desperate debug values
-			std::cout << "xPos: " << xPos << std::endl;
-			std::cout << "yPos: " << yPos << std::endl;
-			std::cout << "forceFactor: " << forceFactor << std::endl;
+			//std::cout << "xPos: " << xPos << std::endl;
+			//std::cout << "yPos: " << yPos << std::endl;
+			//std::cout << "forceFactor: " << forceFactor << std::endl;
 		}
 
 		//--- stop drawing here ---
