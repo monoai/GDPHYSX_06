@@ -4,17 +4,11 @@
 
 #include "obj_mesh.h"
 
-particle::particle(glm::mat4* trans, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) {
-	*trans = glm::mat4(1.0f);
-	*trans = glm::translate(*trans, glm::vec3(0.0f,0.0f,0.0f));
-	//*trans = glm::rotate(*trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
-	*trans = glm::scale(*trans, glm::vec3(1.0f,1.0f,1.0f));
-
-	glm::mat4 normalTrans = glm::transpose(glm::inverse(*trans));
-	glUniformMatrix4fv(*normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-	normalTrans = glm::transpose(glm::inverse(*trans));
-	glUniformMatrix4fv(*normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-	glUniformMatrix4fv(*modelTransformLoc, 1, GL_FALSE, glm::value_ptr(*trans));
+particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object, float &x, float &y, float &z) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
+	this->xPos = x;
+	this->yPos = y;
+	this->zPos = z;
+	applyTrans();
 	glActiveTexture(GL_TEXTURE0);
 	GLuint objTexture = object.textures[object.materials[0].diffuse_texname];
 	glBindTexture(GL_TEXTURE_2D, objTexture);
@@ -23,4 +17,37 @@ particle::particle(glm::mat4* trans, GLuint* normalTransformLoc, GLuint* modelTr
 
 	//unbindtexture after rendering
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void particle::applyTrans() {
+	this->trans = glm::mat4(1.0f);
+	//std::cout << "currxPos set: " << this->xPos << "x: " << x << std::endl;
+	//std::cout << "curryPos set: " << yPos << "y: " << y << std::endl;
+	//*transMat = glm::translate(*transMat, glm::vec3(x,y,zPos));
+	setTranslate();
+	//this->trans = *transMat;
+	//this->trans = glm::translate(this->trans, glm::vec3(xPos,yPos,zPos));
+	//setTranslate(this->xPos,this->yPos,this->zPos);
+	//*trans = glm::rotate(*trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
+	//this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
+	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
+	
+	glm::mat4 normalTransLoc = glm::transpose(glm::inverse(this->trans));
+	glUniformMatrix4fv(this->normalTrans, 1, GL_FALSE, glm::value_ptr(normalTransLoc));
+	normalTransLoc = glm::transpose(glm::inverse(this->trans));
+	glUniformMatrix4fv(this->normalTrans, 1, GL_FALSE, glm::value_ptr(normalTransLoc));
+	//glUniformMatrix4fv(*modelTransformLoc, 1, GL_FALSE, glm::value_ptr(this->trans));
+	glUniformMatrix4fv(this->modelTrans, 1, GL_FALSE, glm::value_ptr(this->trans));
+}
+
+void particle::setPosition(float &x, float &y, float &z) {
+	this->xPos += x;
+	this->yPos += y;
+	this->zPos += z;
+	std::cout << "xPos set: " << xPos << std::endl;
+	std::cout << "yPos set: " << yPos << std::endl;
+}
+
+void particle::setTranslate() {
+	this->trans = glm::translate(this->trans, glm::vec3(this->xPos,yPos,zPos));
 }

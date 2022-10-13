@@ -134,6 +134,7 @@ int main() {
 	// var for Physics
 	float xPos = 0.0f;
 	float yPos = 0.0f;
+	float zPos = 0.0f;
 	float xVel = 0.0f;
 	float yVel = 0.0f;
 	//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
@@ -239,14 +240,16 @@ int main() {
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
 
-		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet);
+		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet, xPos, yPos, zPos);
+		newPart.setPosition(xPos,yPos,zPos);
+		//newPart.setTranslate();
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
 
 		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
-		glUseProgram(shaderProgram);
+		//glUseProgram(shaderProgram);
 
 		// Update Loop
 		// Loops via deltaTime and the Semi-fixed timestep design
@@ -270,9 +273,9 @@ int main() {
 			}
 
 			// Desperate debug values
-			//std::cout << "xPos: " << xPos << std::endl;
-			//std::cout << "yPos: " << yPos << std::endl;
-			//std::cout << "forceFactor: " << forceFactor << std::endl;
+			std::cout << "xPos: " << xPos << std::endl;
+			std::cout << "yPos: " << yPos << std::endl;
+			std::cout << "forceFactor: " << forceFactor << std::endl;
 		}
 
 		//--- stop drawing here ---
