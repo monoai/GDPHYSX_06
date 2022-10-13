@@ -1,4 +1,6 @@
 #pragma once
+#ifndef SKYBOX_H
+#define SKYBOX_H
 
 #include <stdio.h>
 #include <iostream>
@@ -58,6 +60,8 @@ struct SkyboxData {
 };
 
 SkyboxData LoadSkybox(std::string baseDir, std::vector <std::string> faces) {
+	// load obj_mesh class
+	obj_mesh mesh;
 	// load textures
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
@@ -68,10 +72,10 @@ SkyboxData LoadSkybox(std::string baseDir, std::vector <std::string> faces) {
 	std::string textureFileName;
 	for (unsigned int i = 0; i < faces.size(); i++) {
 		textureFileName = baseDir + "/" + faces[i];
-		if (!FileExists(textureFileName)) {
+		if (!mesh.FileExists(textureFileName)) {
 			// Append base dir.
 			textureFileName = textureFileName;
-			if (!FileExists(textureFileName)) {
+			if (!mesh.FileExists(textureFileName)) {
 				std::cerr << "Unable to find file: " << textureFileName << std::endl;
 				exit(1);
 			}
@@ -137,3 +141,4 @@ void DrawSkybox(SkyboxData skybox, GLuint shaderProgram, glm::mat4 view, glm::ma
 	glDepthMask(GL_TRUE);
 	glCullFace(GL_BACK);
 }
+#endif

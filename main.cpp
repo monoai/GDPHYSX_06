@@ -6,6 +6,7 @@
 #include <algorithm>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "glm/glm.hpp"
 #include "obj_mesh.h"
 #include "shader.h"
@@ -13,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "skybox.h"
 #include "glm/gtx/string_cast.hpp"
+#include "particle.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -54,11 +56,12 @@ int main() {
 
 
 #pragma region Mesh Loading
+	obj_mesh mesh; // Initialize class
 
 	ObjData planet;
-	LoadObjFile(&planet, "planets/Earth.obj");
+	mesh.LoadObjFile(&planet, "planets/Earth.obj");
 	GLfloat earthOffsets[] = { 0.0f, 0.0f, 0.0f };
-	LoadObjToMemory(
+	mesh.LoadObjToMemory(
 		&planet,
 		1.0f,
 		earthOffsets
@@ -131,6 +134,7 @@ int main() {
 	// var for Physics
 	float xPos = 0.0f;
 	float yPos = 0.0f;
+	float zPos = 0.0f;
 	float xVel = 0.0f;
 	float yVel = 0.0f;
 	//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
@@ -236,36 +240,16 @@ int main() {
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
 
-		// transforms
-		trans = glm::mat4(1.0f); // identity
-		trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f)); // matrix * translate_matrix
-		//trans = glm::rotate(trans, glm::radians(rotFactor), glm::vec3(0.0f, 1.0f, 0.0f)); // matrix * rotation_matrix
-		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
-
-		//send to shader
-		normalTrans = glm::transpose(glm::inverse(trans));
-		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-		glActiveTexture(GL_TEXTURE0);
-		GLuint sunTexture = planet.textures[planet.materials[0].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, sunTexture);
-
-		//drawbackpack
-		glDrawElements(GL_TRIANGLES, planet.numFaces, GL_UNSIGNED_INT, (void*)0);
-
-		//unbindtexture after rendering
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		//Re-use normal shaders
-		glUseProgram(shaderProgram);
+		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet, xPos, yPos, zPos);
+		newPart.setPosition(xPos,yPos,zPos);
+		//newPart.setTranslate();
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
 
 		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
-		glUseProgram(shaderProgram);
+		//glUseProgram(shaderProgram);
 
 		// Update Loop
 		// Loops via deltaTime and the Semi-fixed timestep design

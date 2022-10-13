@@ -1,4 +1,11 @@
 #pragma once
+#ifndef SHADER_H
+#define SHADER_H
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <GL/glew.h>
 
 void checkShaderCompileStatus(int success, GLuint shader) {
 	char infoLog[512];
@@ -81,3 +88,4 @@ GLuint LoadShaders(std::string vertexShaderPath, std::string fragmentShaderPath)
 	return shaderProgram;
 }
 
+#endif
