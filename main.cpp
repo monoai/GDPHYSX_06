@@ -17,6 +17,7 @@
 #include "particle.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 // Global variables
 float forceFactor = 0.0f;
@@ -149,6 +150,7 @@ int main() {
 	float test = 1.0f;
 
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	//depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -240,9 +242,10 @@ int main() {
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
 
-		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet, xPos, yPos, zPos);
+		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 		newPart.setPosition(xPos,yPos,zPos);
-		//newPart.setTranslate();
+
+		newPart.applyTrans();
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
@@ -350,13 +353,32 @@ int main() {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-	// W - Force
+	// 1 - Pistol
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		forceFactor+=0.1f;
 		forceEnabled = true;
 	}
-	// E - Gravity
-	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+	// 2 - Artillery
+	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
 		gravityEnabled = !gravityEnabled;
-	}	
+	}
+	// 3 - Fireball
+	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+		gravityEnabled = !gravityEnabled;
+	}
+	// 4 - Laser
+	if(glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
+		gravityEnabled = !gravityEnabled;
+	}
+	// 5 - Fireworks
+	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
+		gravityEnabled = !gravityEnabled;
+	}
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+	// onClick
+	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+
+	}
 }

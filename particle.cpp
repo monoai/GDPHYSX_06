@@ -4,15 +4,7 @@
 
 #include "obj_mesh.h"
 
-particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object, float &x, float &y, float &z) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
-	// Assign class variables
-	this->xPos = x;
-	this->yPos = y;
-	this->zPos = z;
-
-	// The function to apply the transformations, values are set outside of the constructor.
-	applyTrans();
-
+particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
 	// Applying textures to the object if there are any detected.
 	glActiveTexture(GL_TEXTURE0);
 	GLuint objTexture = object.textures[object.materials[0].diffuse_texname];
@@ -29,7 +21,7 @@ void particle::applyTrans() {
 	// [DEBUG]
 	//std::cout << "currxPos set: " << this->xPos << "x: " << x << std::endl;
 	//std::cout << "curryPos set: " << yPos << "y: " << y << std::endl;
-	setTranslate();
+	this->trans = glm::translate(this->trans, glm::vec3(xPos,yPos,zPos));
 	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
 	
@@ -41,15 +33,12 @@ void particle::applyTrans() {
 	glUniformMatrix4fv(this->modelTrans, 1, GL_FALSE, glm::value_ptr(this->trans));
 }
 
-void particle::setPosition(float &x, float &y, float &z) {
-	this->xPos += x;
-	this->yPos += y;
-	this->zPos += z;
+void particle::setPosition(float x, float y, float z) {
+	this->xPos = x;
+	this->yPos = y;
+	this->zPos = z;
 	// [DEBUG]
 	//std::cout << "xPos set: " << xPos << std::endl;
 	//std::cout << "yPos set: " << yPos << std::endl;
 }
 
-void particle::setTranslate() {
-	this->trans = glm::translate(this->trans, glm::vec3(this->xPos,yPos,zPos));
-}

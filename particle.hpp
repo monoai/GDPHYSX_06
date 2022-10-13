@@ -10,10 +10,9 @@ struct ObjData;
 
 class particle {
 	public:
-		particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object, float &x, float &y, float &z);
+		particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
 		void applyTrans();
-		void setPosition(float &x, float &y, float &z);
-		void setTranslate();
+		void setPosition(float x, float y, float z);
 	private:
 		glm::mat4& trans;
 		GLuint& normalTrans;
