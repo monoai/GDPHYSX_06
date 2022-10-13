@@ -8,7 +8,8 @@ particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* mode
 }
 
 void particle::update() {
-	this->xPos += 0.5f;
+	this->xPos += this->xVelocity + this->xAcceleration;
+	this->yPos += this->yVelocity +this->yAcceleration;
 }
 
 void particle::draw(ObjData obj) {
@@ -35,6 +36,15 @@ void particle::draw(ObjData obj) {
 
 	// unbindtexture after rendering
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void particle::setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration){
+	this->xVelocity = xVelocity;
+	this->yVelocity = yVelocity;
+
+	this->xAcceleration = xAcceleration;
+	this->yAcceleration = yAcceleration;
+
 }
 
 void particle::setPosition(float x, float y, float z) {

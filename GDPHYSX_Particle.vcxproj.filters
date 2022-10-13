@@ -31,9 +31,6 @@
     <None Include="Shaders\skybox_vertex.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="obj_mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,9 +40,24 @@
     <ClInclude Include="skybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="obj_mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
