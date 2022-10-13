@@ -23,6 +23,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 float forceFactor = 0.0f;
 bool forceEnabled = false;
 bool gravityEnabled = false;
+bool spawnEnabled = false;
 
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
@@ -149,6 +150,8 @@ int main() {
 	bool ortho = false;
 	float test = 1.0f;
 
+	std::vector<particle> particles;
+
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
@@ -242,10 +245,14 @@ int main() {
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
 
-		particle newPart(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-		newPart.setPosition(xPos,yPos,zPos);
-
-		newPart.applyTrans();
+		if(particles.size() > 0) {
+			for(int i = 0; i < particles.size(); i++) {
+				//particles[i].setPosition(xPos, yPos, zPos);
+				particles[i].update();
+				particles[i].draw(planet);
+				//std::cout << "Should be doing smth" << std::endl;
+			}
+		}
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
@@ -276,9 +283,17 @@ int main() {
 			}
 
 			// Desperate debug values
-			std::cout << "xPos: " << xPos << std::endl;
-			std::cout << "yPos: " << yPos << std::endl;
-			std::cout << "forceFactor: " << forceFactor << std::endl;
+			//std::cout << "xPos: " << xPos << std::endl;
+			//std::cout << "yPos: " << yPos << std::endl;
+			//std::cout << "forceFactor: " << forceFactor << std::endl;
+		}
+		
+		if(spawnEnabled==true) {
+			particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
+			totesNew.setPosition(0.0f,0.0f,0.0f);
+			particles.push_back(totesNew);
+			std::cout << "Pushed back!" << std::endl;
+			spawnEnabled = false;
 		}
 
 		//--- stop drawing here ---
@@ -379,6 +394,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	// onClick
 	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-
+		spawnEnabled = true;	
 	}
 }
