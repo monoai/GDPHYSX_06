@@ -4,12 +4,24 @@
 
 #include "obj_mesh.h"
 
-particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
+particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
 }
 
-void particle::update() {
+particle::~particle() {
+	std::cout << "Particle destroyed" << std::endl;
+}
+
+void particle::update(float dT) {
+	this->deltaTime = dT;
 	this->xPos += this->xVelocity + this->xAcceleration;
 	this->yPos += this->yVelocity +this->yAcceleration;
+
+	life += deltaTime;
+	std::cout << "Life: " << life << std::endl;
+	if(life >= 1.5f) {
+		inUse = false;
+		this->~particle();
+	}
 }
 
 void particle::draw(ObjData obj) {

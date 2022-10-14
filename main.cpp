@@ -150,7 +150,7 @@ int main() {
 	//Camera vec vars
 	//Perspective Vecs
 	glm::vec3 eye = glm::vec3(-7.0f, 11.5f, 33.0f);
-	glm::vec3 center = glm::vec3(1.5f, 0.0f, -1.0f);
+	glm::vec3 center = glm::vec3(0.5f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 	float test = 1.0f;
@@ -251,7 +251,8 @@ int main() {
 		//-----draw Sun-----
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
-
+		
+		/*
 		if(particles.size() > 0) {
 			for(int i = 0; i < particles.size(); i++) {
 				//particles[i].setPosition(xPos, yPos, zPos);
@@ -260,6 +261,7 @@ int main() {
 				//std::cout << "Should be doing smth" << std::endl;
 			}
 		}
+		*/
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
@@ -283,13 +285,27 @@ int main() {
 			//std::cout << "xPos: " << xPos << std::endl;
 			//std::cout << "yPos: " << yPos << std::endl;
 			//std::cout << "forceFactor: " << forceFactor << std::endl;
+			
+			if(particles.size() > 0) {
+			for(int i = 0; i < particles.size(); i++) {
+				if(particles[i].inUse == true) {
+					//particles[i].setPosition(xPos, yPos, zPos);
+					particles[i].update(deltaTime);
+					particles[i].draw(planet);
+					//std::cout << "Should be doing smth" << std::endl;
+				}
+			}
+		}
+
 			if(spawnEnabled==true) {
 				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 				totesNew.setPosition(0.0f,0.0f,0.0f);
 				totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration);
+				totesNew.inUse = true;
 				particles.push_back(totesNew);
-				std::cout << "Pushed back!" << std::endl;
+				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
+				}
 			}
 		}
 		
