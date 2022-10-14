@@ -24,8 +24,8 @@ class particle {
 		float xPos = 0.0f;
 		float yPos = 0.0f;
 		float zPos = 0.0f;
-		float deltaTime;
-		float life;
+		float deltaTime = 0.0f;
+		float life = 0.0f;
 
 		float xVelocity = 0.0f;
 		float yVelocity = 0.0f;

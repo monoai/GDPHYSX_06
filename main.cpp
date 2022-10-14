@@ -375,7 +375,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		xVelocity = 1.0f;
 		yVelocity = 0.0f;
 		xAcceleration = 0.0f;
-		yAcceleration = 0.06f;
+		yAcceleration = 0.1f;
 		mass = 1.0f;
 		damping = 0.9f;
 		std::cout << "Fireball set" << std::endl;
