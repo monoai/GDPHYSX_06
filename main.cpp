@@ -29,6 +29,9 @@ float xVelocity = 3.5f;
 float yVelocity = 0.0f;
 float xAcceleration = 0.0f;
 float yAcceleration = -0.1f;
+float mass = 2.0f;
+float damping = 0.99f;
+
 
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
@@ -251,15 +254,15 @@ int main() {
 		//-----draw Sun-----
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
-
+		/*
 		if(particles.size() > 0) {
 			for(int i = 0; i < particles.size(); i++) {
 				//particles[i].setPosition(xPos, yPos, zPos);
 				particles[i].update();
 				particles[i].draw(planet);
-				//std::cout << "Should be doing smth" << std::endl;
 			}
 		}
+		*/
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
@@ -283,10 +286,19 @@ int main() {
 			//std::cout << "xPos: " << xPos << std::endl;
 			//std::cout << "yPos: " << yPos << std::endl;
 			//std::cout << "forceFactor: " << forceFactor << std::endl;
+
+			if (particles.size() > 0) {
+				for (int i = 0; i < particles.size(); i++) {
+					//particles[i].setPosition(xPos, yPos, zPos);
+					particles[i].update(deltaTime);
+					particles[i].draw(planet);
+				}
+			}
+
 			if(spawnEnabled==true) {
 				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 				totesNew.setPosition(0.0f,0.0f,0.0f);
-				totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration);
+				totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration, mass, damping);
 				particles.push_back(totesNew);
 				std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
@@ -338,15 +350,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		xVelocity = 3.5f;
 		yVelocity = 0.0f;
 		xAcceleration = 0.0f;
-		yAcceleration = -0.1f;
+		yAcceleration = -0.01f;
+		mass = 2.0f;
+		damping = 0.99f;
+
 		std::cout << "Pistol set" << std::endl;
 	}
 	// 2 - Artillery
 	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
 		xVelocity = 4.0f;
-		yVelocity = 3.0f;
+		yVelocity = 10.0f;
 		xAcceleration = 0.0f;
-		yAcceleration = -2.0f;
+		yAcceleration = -0.5f;
+		mass = 200.0f;
+		damping = 0.99f;
 		std::cout << "Artillery set" << std::endl;
 	}
 	// 3 - Fireball
@@ -355,13 +372,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		yVelocity = 0.0f;
 		xAcceleration = 0.0f;
 		yAcceleration = 0.06f;
+		mass = 1.0f;
+		damping = 0.9f;
+		std::cout << "Fireball set" << std::endl;
 	}
 	// 4 - Laser
 	if(glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
-		xVelocity = 7.0f;
+		xVelocity = 10.0f;
 		yVelocity = 0.0f;
 		xAcceleration = 0.0f;
 		yAcceleration = 0.0f;
+		mass = 0.1f;
+		damping = 0.99f;
+		std::cout << "Laser set" << std::endl;
 	}
 	// 5 - Fireworks
 	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {

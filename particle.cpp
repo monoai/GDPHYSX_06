@@ -7,9 +7,18 @@
 particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
 }
 
-void particle::update() {
-	this->xPos += this->xVelocity + this->xAcceleration;
-	this->yPos += this->yVelocity +this->yAcceleration;
+void particle::update(float time) {
+	this->xPos += (this->xVelocity*this->damping) + time;
+	this->yPos += (this->yVelocity * this->damping + this->yAcceleration )+ time;
+	
+	if (this->yVelocity > 0 && this->yAcceleration < 0){
+		this->yVelocity += (this->yAcceleration * damping) + time;
+	}
+	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
+	//std::cout <<"xPosition " << this->xPos << std::endl;
+	std::cout <<"yPosition " << this->yPos << std::endl;
+	//std::cout << "Time " << time << std::endl;
+
 }
 
 void particle::draw(ObjData obj) {
@@ -38,12 +47,15 @@ void particle::draw(ObjData obj) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void particle::setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration){
+void particle::setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping){
 	this->xVelocity = xVelocity;
 	this->yVelocity = yVelocity;
 
 	this->xAcceleration = xAcceleration;
 	this->yAcceleration = yAcceleration;
+
+	this->mass = mass;
+	this->damping = damping;
 
 }
 

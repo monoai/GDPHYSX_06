@@ -13,9 +13,9 @@ class particle {
 		particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
 		void draw(ObjData obj);
 		void setPosition(float x, float y, float z);
-		void update();
+		void update(float time);
 
-		void setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration);
+		void setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping);
 	private:
 		glm::mat4& trans;
 		GLuint& normalTrans;
@@ -28,6 +28,9 @@ class particle {
 		float yVelocity = 0.0f;
 		float xAcceleration = 0.0f;
 		float yAcceleration = 0.0f;
+
+		float mass = 0.0f;
+		float damping = 0.0f;
 };
 
 #endif
