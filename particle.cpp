@@ -4,6 +4,7 @@
 
 #include "obj_mesh.h"
 
+
 particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
 }
 
@@ -11,6 +12,11 @@ particle::~particle() {
 	std::cout << "Particle destroyed" << std::endl;
 }
 
+/* [UPDATE FUNCTION]
+ * The function where all the calculations happens
+ * deltaTime usually updated through here to ensure
+ * it only starts when the object is initiated. 
+ */
 void particle::update(float dT) {
 	this->deltaTime = dT;
 	this->xPos += (this->xVelocity*this->damping) + dT;
@@ -19,7 +25,6 @@ void particle::update(float dT) {
 	if (this->yVelocity > 0 && this->yAcceleration < 0){
 		this->yVelocity += (this->yAcceleration * damping) + dT;
 	}
-
 	//[Debug]
 	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
 	//std::cout <<"xPosition " << this->xPos << std::endl;
@@ -34,6 +39,11 @@ void particle::update(float dT) {
 	}
 }
 
+/* [DRAW FUNCTION]
+ * This is where all the OpenGL draw calls and transformations
+ * are happening. All the translations, rotations, scales that
+ * can be done on a model are already handled by this function.
+ */
 void particle::draw(ObjData obj) {
 	this->trans = glm::mat4(1.0f);
 	// [DEBUG]
@@ -60,6 +70,12 @@ void particle::draw(ObjData obj) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+/* [setParticleParams FUNCTION]
+ * This is the function that sets the properties/parameters
+ * of a particle to prepare their proper behavior based on the
+ * selected bullet type. Normally the values are applied
+ * outside of the class
+ */
 void particle::setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping){
 	this->xVelocity = xVelocity;
 	this->yVelocity = yVelocity;
@@ -72,6 +88,13 @@ void particle::setParticleParams(float xVelocity, float yVelocity, float xAccele
 
 }
 
+/* [setPosition FUNCTION]
+ * This is the function that overrides the current position
+ * of a particle whenever needed. Normally this is only used
+ * for debugging purposes but it could also be used for
+ * resetting the position or other use cases that a precise
+ * position is needed
+ */
 void particle::setPosition(float x, float y, float z) {
 	this->xPos = x;
 	this->yPos = y;

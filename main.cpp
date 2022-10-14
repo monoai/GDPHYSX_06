@@ -305,8 +305,9 @@ int main() {
 	}
 	return 0;
 }
-//Reset Values
-//Reverts all global variables of particle to 0.0f
+/* [resetValues FUNCTION]
+ * Reverts all global variables of a particle to 0.0f 
+ */
 void resetValues() {
 	xVelocity = 0.0f;
 	yVelocity = 0.0f;
@@ -316,7 +317,9 @@ void resetValues() {
 	mass = 0.0f;
 }
 
-//User input
+/* [User Inputs FUNCTIONS]
+ * These functions contains the input functionalities of the program
+ */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	// 1 - Pistol
 	if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {

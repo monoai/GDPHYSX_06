@@ -18,15 +18,21 @@ class particle {
 		void setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping);
 		bool inUse;
 	private:
+		// Transformation variables
 		glm::mat4& trans;
 		GLuint& normalTrans;
 		GLuint& modelTrans;
+
+		// Position variables
 		float xPos = 0.0f;
 		float yPos = 0.0f;
 		float zPos = 0.0f;
+
+		// Time variables
 		float deltaTime = 0.0f;
 		float life = 0.0f;
-
+		
+		// Physics variables
 		float xVelocity = 0.0f;
 		float yVelocity = 0.0f;
 		float xAcceleration = 0.0f;
