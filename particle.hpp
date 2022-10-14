@@ -15,8 +15,7 @@ class particle {
 		void draw(ObjData obj);
 		void setPosition(float x, float y, float z);
 		void update(float dT);
-
-		void setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration);
+		void setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping);
 		bool inUse;
 	private:
 		glm::mat4& trans;
@@ -32,6 +31,9 @@ class particle {
 		float yVelocity = 0.0f;
 		float xAcceleration = 0.0f;
 		float yAcceleration = 0.0f;
+
+		float mass = 0.0f;
+		float damping = 0.0f;
 };
 
 #endif
