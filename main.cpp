@@ -25,6 +25,14 @@ bool forceEnabled = false;
 bool gravityEnabled = false;
 bool spawnEnabled = false;
 
+float xVelocity = 3.5f;
+float yVelocity = 0.0f;
+float xAcceleration = 0.0f;
+float yAcceleration = -0.1f;
+float mass = 2.0f;
+float damping = 0.99f;
+
+
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
 #pragma region Initialization
@@ -144,8 +152,8 @@ int main() {
 
 	//Camera vec vars
 	//Perspective Vecs
-	glm::vec3 eye = glm::vec3(60.0f, 0.0f, 55.0f);
-	glm::vec3 center = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 eye = glm::vec3(-7.0f, 11.5f, 33.0f);
+	glm::vec3 center = glm::vec3(0.5f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 	float test = 1.0f;
@@ -186,14 +194,16 @@ int main() {
 		// Orthographic with corection for stretching, resize window to see difference with previous example
 		//projection = glm::ortho(-ratio, ratio, -1.0f, 1.0f, 0.1f, 10.0f);
 
+		/*
+		*/
 		float zoomFactor = 20.0f;
 
 		// Perspective Projection
 		if (ortho == false) {
-			projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 60.0f);
+			projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 500.0f);
 		}
 		else {
-			projection = glm::ortho(-ratio - zoomFactor, ratio + zoomFactor, -1.0f - zoomFactor, 1.0f + zoomFactor, -20.1f, 60.0f);
+			projection = glm::ortho(-ratio - zoomFactor, ratio + zoomFactor, -1.0f - zoomFactor, 1.0f + zoomFactor, -20.1f, 120.0f);
 		}
 
 		// Set projection matrix in shader
@@ -244,15 +254,15 @@ int main() {
 		//-----draw Sun-----
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
-
+		/*
 		if(particles.size() > 0) {
 			for(int i = 0; i < particles.size(); i++) {
 				//particles[i].setPosition(xPos, yPos, zPos);
 				particles[i].update();
 				particles[i].draw(planet);
-				//std::cout << "Should be doing smth" << std::endl;
 			}
 		}
+		*/
 
 		//place lighting
 		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
@@ -272,29 +282,33 @@ int main() {
 			float deltaTime = std::min(frameTime, dT);
 			frameTime -= deltaTime;
 
-			// Place what you want under here
-			if(forceEnabled == true) {
-				//xVel *= forceFactor;
-				xPos += forceFactor;
-			}
-			if(gravityEnabled == true) {
-				yVel -= gravity;
-				yPos += yVel;
-			}
-
 			// Desperate debug values
 			//std::cout << "xPos: " << xPos << std::endl;
 			//std::cout << "yPos: " << yPos << std::endl;
 			//std::cout << "forceFactor: " << forceFactor << std::endl;
+			
+			if(particles.size() > 0) {
+				for(int i = 0; i < particles.size(); i++) {
+					if(particles[i].inUse == true) {
+						//particles[i].setPosition(xPos, yPos, zPos);
+						particles[i].update(deltaTime);
+						particles[i].draw(planet);
+						//std::cout << "Should be doing smth" << std::endl;
+					}
+				}
+			}
+
+			if(spawnEnabled==true) {
+				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
+				totesNew.setPosition(0.0f,0.0f,0.0f);
+				totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration, mass, damping);
+				totesNew.inUse = true;
+				particles.push_back(totesNew);
+				//std::cout << "Pushed back!" << std::endl;
+				spawnEnabled = false;
+			}
 		}
 		
-		if(spawnEnabled==true) {
-			particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-			totesNew.setPosition(0.0f,0.0f,0.0f);
-			particles.push_back(totesNew);
-			std::cout << "Pushed back!" << std::endl;
-			spawnEnabled = false;
-		}
 
 		//--- stop drawing here ---
 #pragma endregion
@@ -303,46 +317,8 @@ int main() {
 		//listen for glfw input events
 		glfwPollEvents();
 		
-		// Q - Reset
-		if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-			// Reset Position
-			xPos = 0.0f;
-			yPos = 0.0f;
-			xVel = 0.0f;
-			yVel = 0.0f;
-			trans = glm::translate(trans, glm::vec3(xPos, yPos, 0.0f));
-			// Reset Force and Gravity
-			forceFactor = 0.0f;
-			forceEnabled = false;
-			gravityEnabled = false;
-		}
-		/*
-		if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-			// Reset Force and Gravity
-			forceFactor = 0.0f;
-			forceEnabled = false;
-		}
-		*/
-
-		/*
-		//Perspective
-		
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			ortho = false;
-			eye = glm::vec3(0.0f, 0.0f, 6.0f);
-			center = glm::vec3(0.0f, 0.0f, -1.0f);
-			up = glm::vec3(0.0f, 1.0f, 0.0f);
-		}
-		//Orthographic
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			ortho = true;
-			eye = glm::vec3(0.0f, -10.0f, 0.0f);
-			center = glm::vec3(0.1f, 60.0f, 0.2f);
-			up = glm::vec3(0.0f, 1.0f, 0.0f);
-		}
-		*/
-		
 		/* Camera Controls
+		*/
 		float camSpeed = 0.05f;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 			eye += camSpeed * center;
@@ -362,34 +338,68 @@ int main() {
 		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 			eye -= camSpeed * up;
 		}
-		*/
 	}
 	return 0;
+}
+void resetValues() {
+	xVelocity = 0.0f;
+	yVelocity = 0.0f;
+	xAcceleration = 0.0f;
+	yAcceleration = 0.0f;
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	// 1 - Pistol
-	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		forceFactor+=0.1f;
-		forceEnabled = true;
+	if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+		xVelocity = 3.5f;
+		yVelocity = 0.0f;
+		xAcceleration = 0.0f;
+		yAcceleration = -0.01f;
+		mass = 2.0f;
+		damping = 0.99f;
+
+		std::cout << "Pistol set" << std::endl;
 	}
 	// 2 - Artillery
 	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-		gravityEnabled = !gravityEnabled;
+		xVelocity = 4.0f;
+		yVelocity = 10.0f;
+		xAcceleration = 0.0f;
+		yAcceleration = -0.5f;
+		mass = 200.0f;
+		damping = 0.99f;
+		std::cout << "Artillery set" << std::endl;
 	}
 	// 3 - Fireball
 	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
-		gravityEnabled = !gravityEnabled;
+		xVelocity = 1.0f;
+		yVelocity = 0.0f;
+		xAcceleration = 0.0f;
+		yAcceleration = 0.1f;
+		mass = 1.0f;
+		damping = 0.9f;
+		std::cout << "Fireball set" << std::endl;
 	}
 	// 4 - Laser
 	if(glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
-		gravityEnabled = !gravityEnabled;
+		xVelocity = 10.0f;
+		yVelocity = 0.0f;
+		xAcceleration = 0.0f;
+		yAcceleration = 0.0f;
+		mass = 0.1f;
+		damping = 0.99f;
+		std::cout << "Laser set" << std::endl;
 	}
 	// 5 - Fireworks
 	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
-		gravityEnabled = !gravityEnabled;
+		xVelocity = 0.0f;
+		yVelocity = 1.0f;
+		xAcceleration = 0.0f;
+		yAcceleration = 0.3f;
 	}
 }
+
+
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	// onClick

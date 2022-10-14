@@ -4,11 +4,31 @@
 
 #include "obj_mesh.h"
 
-particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
+particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
 }
 
-void particle::update() {
-	this->xPos += 0.5f;
+particle::~particle() {
+	std::cout << "Particle destroyed" << std::endl;
+}
+
+void particle::update(float dT) {
+	this->deltaTime = dT;
+	this->xPos += (this->xVelocity*this->damping) + dT;
+	this->yPos += (this->yVelocity * this->damping + this->yAcceleration )+ dT;
+	
+	if (this->yVelocity > 0 && this->yAcceleration < 0){
+		this->yVelocity += (this->yAcceleration * damping) + dT;
+	}
+	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
+	//std::cout <<"xPosition " << this->xPos << std::endl;
+	std::cout <<"yPosition " << this->yPos << std::endl;
+	//std::cout << "Time " << dT << std::endl;
+	life += deltaTime;
+	std::cout << "Life: " << life << std::endl;
+	if(life >= 1.5f) {
+		inUse = false;
+		this->~particle();
+	}
 }
 
 void particle::draw(ObjData obj) {
@@ -35,6 +55,18 @@ void particle::draw(ObjData obj) {
 
 	// unbindtexture after rendering
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void particle::setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping){
+	this->xVelocity = xVelocity;
+	this->yVelocity = yVelocity;
+
+	this->xAcceleration = xAcceleration;
+	this->yAcceleration = yAcceleration;
+
+	this->mass = mass;
+	this->damping = damping;
+
 }
 
 void particle::setPosition(float x, float y, float z) {
