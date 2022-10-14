@@ -149,8 +149,8 @@ int main() {
 
 	//Camera vec vars
 	//Perspective Vecs
-	glm::vec3 eye = glm::vec3(60.0f, 0.0f, 55.0f);
-	glm::vec3 center = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 eye = glm::vec3(-7.0f, 11.5f, 33.0f);
+	glm::vec3 center = glm::vec3(1.5f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 	float test = 1.0f;
@@ -197,7 +197,7 @@ int main() {
 
 		// Perspective Projection
 		if (ortho == false) {
-			projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 60.0f);
+			projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 500.0f);
 		}
 		else {
 			projection = glm::ortho(-ratio - zoomFactor, ratio + zoomFactor, -1.0f - zoomFactor, 1.0f + zoomFactor, -20.1f, 120.0f);
@@ -283,14 +283,14 @@ int main() {
 			//std::cout << "xPos: " << xPos << std::endl;
 			//std::cout << "yPos: " << yPos << std::endl;
 			//std::cout << "forceFactor: " << forceFactor << std::endl;
-		if(spawnEnabled==true) {
-			particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-			totesNew.setPosition(0.0f,0.0f,0.0f);
-			totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration);
-			particles.push_back(totesNew);
-			std::cout << "Pushed back!" << std::endl;
-			spawnEnabled = false;
-		}
+			if(spawnEnabled==true) {
+				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
+				totesNew.setPosition(0.0f,0.0f,0.0f);
+				totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration);
+				particles.push_back(totesNew);
+				std::cout << "Pushed back!" << std::endl;
+				spawnEnabled = false;
+			}
 		}
 		
 
