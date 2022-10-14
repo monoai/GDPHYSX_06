@@ -147,8 +147,6 @@ int main() {
 	float zPos = 0.0f;
 	float xVel = 0.0f;
 	float yVel = 0.0f;
-	//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
-	float gravity = 0.05f;
 
 	//Camera vec vars
 	//Perspective Vecs
@@ -156,7 +154,6 @@ int main() {
 	glm::vec3 center = glm::vec3(0.5f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
-	float test = 1.0f;
 
 	std::vector<particle> particles;
 
@@ -215,23 +212,7 @@ int main() {
 		glm::mat4 view;
 
 		view = glm::lookAt(eye, eye + center, up);
-		/*
-		if (ortho == false) {
-			view = glm::lookAt(
-				glm::vec3(0.0f, 10.0f, -20.0f),
-				center,
-				glm::vec3(0.0f, 1.0f, 0.0f)
-			);
-		}
-		else {
-			view = glm::lookAt(
-				eye,
-				center,
-				//glm::vec3(trans[3][0], trans[3][1], trans[3][2]),
-				up
-			);
-		}
-		*/
+
 		glUniform3f(cameraPosLoc, eye.x, eye.y, eye.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -251,30 +232,14 @@ int main() {
 
 		DrawSkybox(skybox, skyboxShaderProgram, view, projection);
 
-		//-----draw Sun-----
+		//-----draw particle-----
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
-		/*
-		if(particles.size() > 0) {
-			for(int i = 0; i < particles.size(); i++) {
-				//particles[i].setPosition(xPos, yPos, zPos);
-				particles[i].update();
-				particles[i].draw(planet);
-			}
-		}
-		*/
-
-		//place lighting
-		//glUniform3f(lightPosLoc, trans[0][0], trans[0][1], trans[0][2]);
 
 		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
-		//glUseProgram(shaderProgram);
-
 		// Update Loop
 		// Loops via deltaTime and the Semi-fixed timestep design
-		//currentTime = glfwGetTime();
-		//deltaTime = currentTime - prevTime;
 		float newTime = glfwGetTime();
 		float frameTime = newTime - currentTime;
 		currentTime = newTime;
@@ -282,7 +247,7 @@ int main() {
 			float deltaTime = std::min(frameTime, dT);
 			frameTime -= deltaTime;
 
-			// Desperate debug values
+			//Debug
 			//std::cout << "xPos: " << xPos << std::endl;
 			//std::cout << "yPos: " << yPos << std::endl;
 			//std::cout << "forceFactor: " << forceFactor << std::endl;
@@ -308,8 +273,6 @@ int main() {
 				spawnEnabled = false;
 			}
 		}
-		
-
 		//--- stop drawing here ---
 #pragma endregion
 
@@ -317,8 +280,8 @@ int main() {
 		//listen for glfw input events
 		glfwPollEvents();
 		
-		/* Camera Controls
-		*/
+		/* 
+		Camera Controls
 		float camSpeed = 0.05f;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 			eye += camSpeed * center;
@@ -338,16 +301,22 @@ int main() {
 		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 			eye -= camSpeed * up;
 		}
+		*/
 	}
 	return 0;
 }
+//Reset Values
+//Reverts all global variables of particle to 0.0f
 void resetValues() {
 	xVelocity = 0.0f;
 	yVelocity = 0.0f;
 	xAcceleration = 0.0f;
 	yAcceleration = 0.0f;
+	damping = 0.0f;
+	mass = 0.0f;
 }
 
+//User input
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	// 1 - Pistol
 	if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
@@ -398,8 +367,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		yAcceleration = 0.3f;
 	}
 }
-
-
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	// onClick

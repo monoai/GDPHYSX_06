@@ -19,12 +19,15 @@ void particle::update(float dT) {
 	if (this->yVelocity > 0 && this->yAcceleration < 0){
 		this->yVelocity += (this->yAcceleration * damping) + dT;
 	}
+
+	//[Debug]
 	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
 	//std::cout <<"xPosition " << this->xPos << std::endl;
-	std::cout <<"yPosition " << this->yPos << std::endl;
+	//std::cout <<"yPosition " << this->yPos << std::endl;
 	//std::cout << "Time " << dT << std::endl;
 	life += deltaTime;
-	std::cout << "Life: " << life << std::endl;
+	//[Debug]
+	//std::cout << "Life: " << life << std::endl;
 	if(life >= 1.5f) {
 		inUse = false;
 		this->~particle();
