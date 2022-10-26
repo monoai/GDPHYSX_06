@@ -76,15 +76,64 @@ void particle::draw(ObjData obj) {
  * selected bullet type. Normally the values are applied
  * outside of the class
  */
-void particle::setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping){
-	this->xVelocity = xVelocity;
-	this->yVelocity = yVelocity;
+void particle::setParticleParams(particleName name) {
 
-	this->xAcceleration = xAcceleration;
-	this->yAcceleration = yAcceleration;
-
-	this->mass = mass;
-	this->damping = damping;
+	switch (name)
+	{
+	case PISTOL:
+		this->xVelocity = 3.5f;
+		this->yVelocity = 0.0f;
+		this->xAcceleration = 0.0f;
+		this->yAcceleration = -0.01f;
+		this->mass = 2.0f;
+		this->damping = 0.99f;
+		std::cout << "Pistol set" << std::endl;
+		break;
+	case ARTILLERY:
+		this->xVelocity = 4.0f;
+		this->yVelocity = 10.0f;
+		this->xAcceleration = 0.0f;
+		this->yAcceleration = -0.5f;
+		this->mass = 200.0f;
+		this->damping = 0.99f;
+		std::cout << "Artillery set" << std::endl;
+		break;
+	case FIREBALL:
+		this->xVelocity = 1.0f;
+		this->yVelocity = 0.0f;
+		this->xAcceleration = 0.0f;
+		this->yAcceleration = 0.1f;
+		this->mass = 1.0f;
+		this->damping = 0.9f;
+		std::cout << "Fireball set" << std::endl;
+		break;
+	case LASER:
+		this->xVelocity = 10.0f;
+		this->yVelocity = 0.0f;
+		this->xAcceleration = 0.0f;
+		this->yAcceleration = 0.0f;
+		this->mass = 0.1f;
+		this->damping = 0.99f;
+		std::cout << "Laser set" << std::endl;
+		break;
+	case FIREWORK:
+		this->xVelocity = 0.0f;
+		this->yVelocity = 1.0f;
+		this->xAcceleration = 0.0f;
+		this->yAcceleration = 0.3f;
+		std::cout << "Firework set" << std::endl;
+		break;
+	
+	default:
+		this->xVelocity = 0.0f;
+		this->yVelocity = 0.0f;
+		this->xAcceleration = 0.0f;
+		this->yAcceleration = 0.0f;
+		this->mass = 0.0f;
+		this->damping = 0.0f;
+		std::cout << "Unknown particle. Setting to 0" << std::endl;
+		break;
+	}
 
 }
 
@@ -103,4 +152,3 @@ void particle::setPosition(float x, float y, float z) {
 	//std::cout << "xPos set: " << xPos << std::endl;
 	//std::cout << "yPos set: " << yPos << std::endl;
 }
-

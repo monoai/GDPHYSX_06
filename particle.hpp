@@ -4,6 +4,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/matrix.hpp>
 //#include "obj_mesh.h"
 
 struct ObjData;
@@ -12,10 +13,16 @@ class particle {
 	public:
 		particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
 		~particle();
+
+		enum particleName {
+			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
+		};
+
 		void draw(ObjData obj);
 		void setPosition(float x, float y, float z);
+		void setPosition(glm::vec3 vector);
 		void update(float dT);
-		void setParticleParams(float xVelocity, float yVelocity, float xAcceleration, float yAcceleration, float mass, float damping);
+		void setParticleParams(particleName name);
 		bool inUse;
 	private:
 		// Transformation variables
@@ -27,6 +34,10 @@ class particle {
 		float xPos = 0.0f;
 		float yPos = 0.0f;
 		float zPos = 0.0f;
+
+		glm::vec3 positionMatrix = glm::vec3(0.0f);
+		glm::vec3 velocityMatrix = glm::vec3(0.0f);
+		glm::vec3 accelerationMatrix = glm::vec3(0.0f);
 
 		// Time variables
 		float deltaTime = 0.0f;
