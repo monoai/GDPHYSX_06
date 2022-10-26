@@ -19,7 +19,6 @@ class particle {
 		};
 
 		void draw(ObjData obj);
-		void setPosition(float x, float y, float z);
 		void setPosition(glm::vec3 vector);
 		void update(float dT);
 		void setParticleParams(particleName name);
@@ -31,23 +30,15 @@ class particle {
 		GLuint& modelTrans;
 
 		// Position variables
-		float xPos = 0.0f;
-		float yPos = 0.0f;
-		float zPos = 0.0f;
-
-		glm::vec3 positionMatrix = glm::vec3(0.0f);
-		glm::vec3 velocityMatrix = glm::vec3(0.0f);
-		glm::vec3 accelerationMatrix = glm::vec3(0.0f);
+		glm::vec3 positionVector = glm::vec3(0.0f);
 
 		// Time variables
 		float deltaTime = 0.0f;
 		float life = 0.0f;
 		
 		// Physics variables
-		float xVelocity = 0.0f;
-		float yVelocity = 0.0f;
-		float xAcceleration = 0.0f;
-		float yAcceleration = 0.0f;
+		glm::vec3 velocityVector = glm::vec3(0.0f);
+		glm::vec3 accelerationVector = glm::vec3(0.0f);
 
 		float mass = 0.0f;
 		float damping = 0.0f;

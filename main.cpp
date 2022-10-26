@@ -26,15 +26,6 @@ bool gravityEnabled = false;
 bool spawnEnabled = false;
 
 particle::particleName particleType = particle::particleName::PISTOL;
-/*
-float xVelocity = 3.5f;
-float yVelocity = 0.0f;
-float xAcceleration = 0.0f;
-float yAcceleration = -0.1f;
-float mass = 2.0f;
-float damping = 0.99f;
-*/
-
 
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
@@ -144,12 +135,6 @@ int main() {
 	float prevTime = 0.0f;
 	float dT = 1.0f / 60.0f;
 
-	// var for Physics
-	float xPos = 0.0f;
-	float yPos = 0.0f;
-	float zPos = 0.0f;
-	float xVel = 0.0f;
-	float yVel = 0.0f;
 
 	//Camera vec vars
 	//Perspective Vecs
@@ -171,6 +156,8 @@ int main() {
 	glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK); // set which face to cull
 	//glFrontFace(GL_CCW); // set the front face orientation
+
+#pragma endregion
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -268,7 +255,7 @@ int main() {
 
 			if(spawnEnabled==true) {
 				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-				totesNew.setPosition(0.0f,0.0f,0.0f);
+				totesNew.setPosition(glm::vec3(0.0f));
 				totesNew.setParticleParams(particleType);
 				totesNew.inUse = true;
 				particles.push_back(totesNew);
@@ -312,14 +299,7 @@ int main() {
  * Reverts all global variables of a particle to 0.0f 
  */
 void resetValues() {
-	/*
-	xVelocity = 0.0f;
-	yVelocity = 0.0f;
-	xAcceleration = 0.0f;
-	yAcceleration = 0.0f;
-	damping = 0.0f;
-	mass = 0.0f;
-	*/
+	particleType = particle::UNKNOWN;
 }
 
 /* [User Inputs FUNCTIONS]

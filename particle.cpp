@@ -18,6 +18,8 @@ particle::~particle() {
  * it only starts when the object is initiated. 
  */
 void particle::update(float dT) {
+	//Old Code
+	/*
 	this->deltaTime = dT;
 	this->xPos += (this->xVelocity*this->damping) + dT;
 	this->yPos += (this->yVelocity * this->damping + this->yAcceleration )+ dT;
@@ -25,6 +27,15 @@ void particle::update(float dT) {
 	if (this->yVelocity > 0 && this->yAcceleration < 0){
 		this->yVelocity += (this->yAcceleration * damping) + dT;
 	}
+	*/
+
+	this->deltaTime = dT;
+	this->positionVector += (this->velocityVector * this->damping + this->accelerationVector) + dT;
+
+	if (this->velocityVector.y > 0 && this->accelerationVector.y < 0) {
+		this->velocityVector.y += (this->accelerationVector.y * damping) + dT;
+	}
+
 	//[Debug]
 	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
 	//std::cout <<"xPosition " << this->xPos << std::endl;
@@ -49,7 +60,7 @@ void particle::draw(ObjData obj) {
 	// [DEBUG]
 	//std::cout << "currxPos set: " << this->xPos << std::endl;
 	//std::cout << "curryPos set: " << yPos << std::endl;
-	this->trans = glm::translate(this->trans, glm::vec3(xPos,yPos,zPos));
+	this->trans = glm::translate(this->trans, positionVector);
 	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
 	
@@ -81,54 +92,50 @@ void particle::setParticleParams(particleName name) {
 	switch (name)
 	{
 	case PISTOL:
-		this->xVelocity = 3.5f;
-		this->yVelocity = 0.0f;
-		this->xAcceleration = 0.0f;
-		this->yAcceleration = -0.01f;
+		this->velocityVector = glm::vec3(3.5f, 0.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, -0.01f, 0.0f);
+
 		this->mass = 2.0f;
 		this->damping = 0.99f;
 		std::cout << "Pistol set" << std::endl;
 		break;
 	case ARTILLERY:
-		this->xVelocity = 4.0f;
-		this->yVelocity = 10.0f;
-		this->xAcceleration = 0.0f;
-		this->yAcceleration = -0.5f;
+		this->velocityVector = glm::vec3(4.0f, 10.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, -0.5, 0.0f);
+
 		this->mass = 200.0f;
 		this->damping = 0.99f;
 		std::cout << "Artillery set" << std::endl;
 		break;
 	case FIREBALL:
-		this->xVelocity = 1.0f;
-		this->yVelocity = 0.0f;
-		this->xAcceleration = 0.0f;
-		this->yAcceleration = 0.1f;
+		this->velocityVector = glm::vec3(1.0f, 0.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, 0.01f, 0.0f);
+
 		this->mass = 1.0f;
 		this->damping = 0.9f;
 		std::cout << "Fireball set" << std::endl;
 		break;
 	case LASER:
-		this->xVelocity = 10.0f;
-		this->yVelocity = 0.0f;
-		this->xAcceleration = 0.0f;
-		this->yAcceleration = 0.0f;
+
+		this->velocityVector = glm::vec3(10.0f, 0.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, 0.0f, 0.0f);
+
 		this->mass = 0.1f;
 		this->damping = 0.99f;
 		std::cout << "Laser set" << std::endl;
 		break;
 	case FIREWORK:
-		this->xVelocity = 0.0f;
-		this->yVelocity = 1.0f;
-		this->xAcceleration = 0.0f;
-		this->yAcceleration = 0.3f;
+		this->velocityVector = glm::vec3(0.0f, 0.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, 0.3f, 0.0f);
+
 		std::cout << "Firework set" << std::endl;
 		break;
 	
 	default:
-		this->xVelocity = 0.0f;
-		this->yVelocity = 0.0f;
-		this->xAcceleration = 0.0f;
-		this->yAcceleration = 0.0f;
+
+		this->velocityVector = glm::vec3(0.0f);
+		this->accelerationVector = glm::vec3(0.0f);
+
 		this->mass = 0.0f;
 		this->damping = 0.0f;
 		std::cout << "Unknown particle. Setting to 0" << std::endl;
@@ -144,10 +151,9 @@ void particle::setParticleParams(particleName name) {
  * resetting the position or other use cases that a precise
  * position is needed
  */
-void particle::setPosition(float x, float y, float z) {
-	this->xPos = x;
-	this->yPos = y;
-	this->zPos = z;
+void particle::setPosition(glm::vec3 vector) {
+
+	this->positionVector = vector;
 	// [DEBUG]
 	//std::cout << "xPos set: " << xPos << std::endl;
 	//std::cout << "yPos set: " << yPos << std::endl;
