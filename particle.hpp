@@ -32,8 +32,7 @@ class particle {
 		// Position variables
 		glm::vec3 positionVector = glm::vec3(0.0f);
 
-		// Time variables
-		float deltaTime = 0.0f;
+		// Life variables
 		float life = 0.0f;
 		
 		// Physics variables

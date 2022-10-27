@@ -1,6 +1,7 @@
 #include "particle.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath>
 
 #include "obj_mesh.h"
 
@@ -18,11 +19,15 @@ particle::~particle() {
  * it only starts when the object is initiated. 
  */
 void particle::update(float dT) {
+	
+	// Updates the position
+	this->positionVector += this->velocityVector * dT;
 
-	this->deltaTime = dT;
-	this->positionVector += this->velocityVector + dT;
-	this->velocityVector += this->accelerationVector + dT;
-	this->velocityVector *= this->damping;
+	// Calculates the acceleration
+	this->velocityVector += this->accelerationVector * dT;
+
+	// Adds drag
+	this->velocityVector *= pow(this->damping,dT);
 
 
 	//[Debug]
@@ -30,10 +35,10 @@ void particle::update(float dT) {
 	//std::cout <<"xPosition " << this->xPos << std::endl;
 	//std::cout <<"yPosition " << this->yPos << std::endl;
 	//std::cout << "Time " << dT << std::endl;
-	life += deltaTime;
+	life += dT;
 	//[Debug]
 	//std::cout << "Life: " << life << std::endl;
-	if(life >= 1.5f) {
+	if(life >= 2.5f) {
 		inUse = false;
 		this->~particle();
 	}
@@ -81,24 +86,24 @@ void particle::setParticleParams(particleName name) {
 	switch (name)
 	{
 	case PISTOL:
-		this->velocityVector = glm::vec3(3.5f, 0.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, -0.01f, 0.0f);
+		this->velocityVector = glm::vec3(35.0f, 0.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, -1.0f, 0.0f);
 
 		this->mass = 2.0f;
 		this->damping = 0.99f;
 		std::cout << "Pistol set" << std::endl;
 		break;
 	case ARTILLERY:
-		this->velocityVector = glm::vec3(4.0f, 10.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, -0.5, 0.0f);
+		this->velocityVector = glm::vec3(40.0f, 30.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, -20.0f, 0.0f);
 
 		this->mass = 200.0f;
 		this->damping = 0.99f;
 		std::cout << "Artillery set" << std::endl;
 		break;
 	case FIREBALL:
-		this->velocityVector = glm::vec3(1.0f, 0.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, 0.01f, 0.0f);
+		this->velocityVector = glm::vec3(10.0f, 0.0f, 0.0f);
+		this->accelerationVector = glm::vec3(0.0f, 0.6f, 0.0f);
 
 		this->mass = 1.0f;
 		this->damping = 0.99f;
@@ -106,7 +111,7 @@ void particle::setParticleParams(particleName name) {
 		break;
 	case LASER:
 
-		this->velocityVector = glm::vec3(10.0f, 0.0f, 0.0f);
+		this->velocityVector = glm::vec3(100.0f, 0.0f, 0.0f);
 		this->accelerationVector = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		this->mass = 0.1f;
