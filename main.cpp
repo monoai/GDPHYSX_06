@@ -25,13 +25,7 @@ bool forceEnabled = false;
 bool gravityEnabled = false;
 bool spawnEnabled = false;
 
-float xVelocity = 3.5f;
-float yVelocity = 0.0f;
-float xAcceleration = 0.0f;
-float yAcceleration = -0.1f;
-float mass = 2.0f;
-float damping = 0.99f;
-
+particle::particleName particleType = particle::particleName::PISTOL;
 
 int main() {
 	//stbi_set_flip_vertically_on_load(true);
@@ -141,12 +135,6 @@ int main() {
 	float prevTime = 0.0f;
 	float dT = 1.0f / 60.0f;
 
-	// var for Physics
-	float xPos = 0.0f;
-	float yPos = 0.0f;
-	float zPos = 0.0f;
-	float xVel = 0.0f;
-	float yVel = 0.0f;
 
 	//Camera vec vars
 	//Perspective Vecs
@@ -168,6 +156,8 @@ int main() {
 	glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK); // set which face to cull
 	//glFrontFace(GL_CCW); // set the front face orientation
+
+#pragma endregion
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -265,8 +255,8 @@ int main() {
 
 			if(spawnEnabled==true) {
 				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-				totesNew.setPosition(0.0f,0.0f,0.0f);
-				totesNew.setParticleParams(xVelocity, yVelocity, xAcceleration, yAcceleration, mass, damping);
+				totesNew.setPosition(glm::vec3(0.0f));
+				totesNew.setParticleParams(particleType);
 				totesNew.inUse = true;
 				particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
@@ -309,65 +299,34 @@ int main() {
  * Reverts all global variables of a particle to 0.0f 
  */
 void resetValues() {
-	xVelocity = 0.0f;
-	yVelocity = 0.0f;
-	xAcceleration = 0.0f;
-	yAcceleration = 0.0f;
-	damping = 0.0f;
-	mass = 0.0f;
+	particleType = particle::UNKNOWN;
 }
 
 /* [User Inputs FUNCTIONS]
  * These functions contains the input functionalities of the program
  */
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+
 	// 1 - Pistol
 	if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
-		xVelocity = 3.5f;
-		yVelocity = 0.0f;
-		xAcceleration = 0.0f;
-		yAcceleration = -0.01f;
-		mass = 2.0f;
-		damping = 0.99f;
-
-		std::cout << "Pistol set" << std::endl;
+		particleType = particle::PISTOL;
 	}
 	// 2 - Artillery
 	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-		xVelocity = 4.0f;
-		yVelocity = 10.0f;
-		xAcceleration = 0.0f;
-		yAcceleration = -0.5f;
-		mass = 200.0f;
-		damping = 0.99f;
-		std::cout << "Artillery set" << std::endl;
+		particleType = particle::ARTILLERY;
+
 	}
 	// 3 - Fireball
 	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
-		xVelocity = 1.0f;
-		yVelocity = 0.0f;
-		xAcceleration = 0.0f;
-		yAcceleration = 0.1f;
-		mass = 1.0f;
-		damping = 0.9f;
-		std::cout << "Fireball set" << std::endl;
+		particleType = particle::FIREBALL;
 	}
 	// 4 - Laser
 	if(glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
-		xVelocity = 10.0f;
-		yVelocity = 0.0f;
-		xAcceleration = 0.0f;
-		yAcceleration = 0.0f;
-		mass = 0.1f;
-		damping = 0.99f;
-		std::cout << "Laser set" << std::endl;
+		particleType = particle::LASER;
 	}
 	// 5 - Fireworks
 	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
-		xVelocity = 0.0f;
-		yVelocity = 1.0f;
-		xAcceleration = 0.0f;
-		yAcceleration = 0.3f;
+		particleType = particle::FIREWORK;
 	}
 }
 
