@@ -24,10 +24,17 @@ void particle::update(float dT) {
 	this->positionVector += this->velocityVector * dT;
 
 	// Calculates the acceleration
-	this->velocityVector += this->accelerationVector * dT;
+	glm::vec3 newAccel = this->accelerationVector;
+	newAccel += this->forceAccumVec * this->inverseMass; 
+	
+	// Updates the velocity
+	this->velocityVector += newAccel * dT;
 
 	// Adds drag
 	this->velocityVector *= pow(this->damping,dT);
+
+	// Clears accumulated force
+	clearForceAccum();
 
 
 	//[Debug]
@@ -89,7 +96,7 @@ void particle::setParticleParams(particleName name) {
 		this->velocityVector = glm::vec3(35.0f, 0.0f, 0.0f);
 		this->accelerationVector = glm::vec3(0.0f, -1.0f, 0.0f);
 
-		this->mass = 2.0f;
+		this->setMass(2.0f);
 		this->damping = 0.99f;
 		std::cout << "Pistol set" << std::endl;
 		break;
@@ -97,7 +104,7 @@ void particle::setParticleParams(particleName name) {
 		this->velocityVector = glm::vec3(40.0f, 30.0f, 0.0f);
 		this->accelerationVector = glm::vec3(0.0f, -20.0f, 0.0f);
 
-		this->mass = 200.0f;
+		this->setMass(200.0f);
 		this->damping = 0.99f;
 		std::cout << "Artillery set" << std::endl;
 		break;
@@ -105,7 +112,7 @@ void particle::setParticleParams(particleName name) {
 		this->velocityVector = glm::vec3(10.0f, 0.0f, 0.0f);
 		this->accelerationVector = glm::vec3(0.0f, 0.6f, 0.0f);
 
-		this->mass = 1.0f;
+		this->setMass(1.0f);
 		this->damping = 0.99f;
 		std::cout << "Fireball set" << std::endl;
 		break;
@@ -114,7 +121,7 @@ void particle::setParticleParams(particleName name) {
 		this->velocityVector = glm::vec3(100.0f, 0.0f, 0.0f);
 		this->accelerationVector = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		this->mass = 0.1f;
+		this->setMass(0.1f);
 		this->damping = 0.99f;
 		std::cout << "Laser set" << std::endl;
 		break;
@@ -130,12 +137,16 @@ void particle::setParticleParams(particleName name) {
 		this->velocityVector = glm::vec3(0.0f);
 		this->accelerationVector = glm::vec3(0.0f);
 
-		this->mass = 0.0f;
+		this->setMass(0.0f);
 		this->damping = 0.0f;
 		std::cout << "Unknown particle. Setting to 0" << std::endl;
 		break;
 	}
 
+}
+
+void particle::clearForceAccum() {
+	this->forceAccumVec = glm::vec3(0.0f);
 }
 
 /* [setPosition FUNCTION]
@@ -151,4 +162,8 @@ void particle::setPosition(glm::vec3 vector) {
 	// [DEBUG]
 	//std::cout << "xPos set: " << xPos << std::endl;
 	//std::cout << "yPos set: " << yPos << std::endl;
+}
+
+void particle::setMass(float mass) {
+	this->inverseMass = (1.0f)/mass;
 }

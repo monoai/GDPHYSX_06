@@ -19,9 +19,11 @@ class particle {
 		};
 
 		void draw(ObjData obj);
-		void setPosition(glm::vec3 vector);
 		void update(float dT);
+		void clearForceAccum();
 		void setParticleParams(particleName name);
+		void setPosition(glm::vec3 vector);
+		void setMass(float mass);
 		bool inUse;
 	private:
 		// Transformation variables
@@ -38,7 +40,10 @@ class particle {
 		// Physics variables
 		glm::vec3 velocityVector = glm::vec3(0.0f);
 		glm::vec3 accelerationVector = glm::vec3(0.0f);
+		glm::vec3 forceAccumVec = glm::vec3(0.0f);
 
+		// Particle properties
+		float inverseMass = 0.0f;
 		float mass = 0.0f;
 		float damping = 0.0f;
 };
