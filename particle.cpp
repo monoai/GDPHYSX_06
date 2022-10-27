@@ -18,23 +18,12 @@ particle::~particle() {
  * it only starts when the object is initiated. 
  */
 void particle::update(float dT) {
-	//Old Code
-	/*
-	this->deltaTime = dT;
-	this->xPos += (this->xVelocity*this->damping) + dT;
-	this->yPos += (this->yVelocity * this->damping + this->yAcceleration )+ dT;
-	
-	if (this->yVelocity > 0 && this->yAcceleration < 0){
-		this->yVelocity += (this->yAcceleration * damping) + dT;
-	}
-	*/
 
 	this->deltaTime = dT;
-	this->positionVector += (this->velocityVector * this->damping + this->accelerationVector) + dT;
+	this->positionVector += this->velocityVector + dT;
+	this->velocityVector += this->accelerationVector + dT;
+	this->velocityVector *= this->damping;
 
-	if (this->velocityVector.y > 0 && this->accelerationVector.y < 0) {
-		this->velocityVector.y += (this->accelerationVector.y * damping) + dT;
-	}
 
 	//[Debug]
 	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
@@ -112,7 +101,7 @@ void particle::setParticleParams(particleName name) {
 		this->accelerationVector = glm::vec3(0.0f, 0.01f, 0.0f);
 
 		this->mass = 1.0f;
-		this->damping = 0.9f;
+		this->damping = 0.99f;
 		std::cout << "Fireball set" << std::endl;
 		break;
 	case LASER:
