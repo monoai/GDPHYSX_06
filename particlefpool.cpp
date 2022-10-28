@@ -9,7 +9,8 @@ void particleForcePool::add(particle* particle, particleForceGen *fg) {
 }
 
 void particleForcePool::updateForces(float dT) {
-	for(auto& i : pool) {
+	std::vector<particleForcePooler>::iterator i = pool.begin();
+	for(; i != pool.end(); ++i) {
 		i->fg->updateForce(i->particle, dT);
 	}
 }
