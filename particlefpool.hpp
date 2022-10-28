@@ -10,15 +10,15 @@
 class particleForcePool {
 	private:
 		struct particleForcePooler {
-			particle *particle;
-			particleForceGen *fg;
+			particle *_particle;
+			particleForceGen *_fg;
 		};
 		
 		std::vector<particleForcePooler> pool;
 	public:
-		void add(particle* particle, particleForceGen *fg);
-		void remove(particle* particle, particleForceGen *fg);
-		void clear(particle* particle, particleForceGen *fg);
+		void add(particle* _particle, particleForceGen *_fg);
+		void remove(particle* _particle, particleForceGen *_fg);
+		void clear(particle* _particle, particleForceGen *_fg);
 		void updateForces(float dT);
 };
 

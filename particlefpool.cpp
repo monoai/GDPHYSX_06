@@ -1,9 +1,9 @@
 #include "particlefpool.hpp"
 
-void particleForcePool::add(particle* particle, particleForceGen *fg) {
+void particleForcePool::add(particle* _particle, particleForceGen *_fg) {
 	particleForcePooler newPool;
-	newPool.particle = particle;
-	newPool.fg = fg;
+	newPool._particle = _particle;
+	newPool._fg = _fg;
 	
 	this->pool.push_back(newPool);
 }
@@ -11,6 +11,6 @@ void particleForcePool::add(particle* particle, particleForceGen *fg) {
 void particleForcePool::updateForces(float dT) {
 	std::vector<particleForcePooler>::iterator i = pool.begin();
 	for(; i != pool.end(); ++i) {
-		i->fg->updateForce(i->particle, dT);
+		i->_fg->updateForce(i->_particle, dT);
 	}
 }

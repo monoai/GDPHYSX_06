@@ -6,7 +6,7 @@
 
 class particleForceGen {
 	public:
-		void updateForce(particle *particle, float dT);
+		virtual void updateForce(particle *particle, float dT) = 0;
 };
 
 class particleGravity : public particleForceGen {
