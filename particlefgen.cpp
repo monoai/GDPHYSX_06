@@ -30,7 +30,7 @@ void SpringParticle::updateForce(particle* particle, float duration) {
 
 	float magnitude = force.length();
 
-	magnitude = abs(magnitude - restLength);
+	magnitude = std::abs(magnitude - restLength);
 	magnitude *= springConstant;
 
 	force = glm::normalize(force);
@@ -46,7 +46,7 @@ void AnchoredSpring::updateForce(particle* particle, float duration) {
 
 	float magnitude = force.length();
 
-	magnitude = abs(magnitude - restLength);
+	magnitude = std::abs(magnitude - restLength);
 	magnitude *= springConstant;
 
 	force = glm::normalize(force);
@@ -62,7 +62,7 @@ void ElasticBungee::updateForce(particle* particle, float duration) {
 
 	float magnitude = force.length();
 
-	magnitude = abs(magnitude - restLength);
+	magnitude = std::abs(magnitude - restLength);
 	if (magnitude <= restLength) return;
 
 	magnitude = springConstant * (restLength - magnitude);
