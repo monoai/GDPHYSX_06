@@ -145,6 +145,10 @@ void particle::setParticleParams(particleName name) {
 
 }
 
+void particle::addForce(glm::vec3 force) {
+	this->forceAccumVec += force;
+}
+
 void particle::clearForceAccum() {
 	this->forceAccumVec = glm::vec3(0.0f);
 }
@@ -164,6 +168,18 @@ void particle::setPosition(glm::vec3 vector) {
 	//std::cout << "yPos set: " << yPos << std::endl;
 }
 
+float particle::getInverseMass() {
+	return this->inverseMass;
+}
+
 void particle::setMass(float mass) {
 	this->inverseMass = (1.0f)/mass;
+}
+
+float particle::getMass() {
+	return (1.0f)/this->inverseMass;
+}
+
+glm::vec3 particle::getVelocity() {
+	return this->velocityVector;
 }

@@ -21,9 +21,13 @@ class particle {
 		void draw(ObjData obj);
 		void update(float dT);
 		void clearForceAccum();
+		void addForce(glm::vec3 force);
 		void setParticleParams(particleName name);
 		void setPosition(glm::vec3 vector);
+		float getInverseMass();
 		void setMass(float mass);
+		float getMass();
+		glm::vec3 getVelocity();
 		bool inUse;
 	private:
 		// Transformation variables
