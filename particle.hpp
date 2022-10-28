@@ -12,7 +12,8 @@ struct ObjData;
 class particle {
 	public:
 		particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
-		~particle();
+		//~particle();
+		//particle(const particle &other);
 
 		enum particleName {
 			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
@@ -31,6 +32,7 @@ class particle {
 		void setMass(float mass);
 		float getMass();
 		glm::vec3 getVelocity();
+		glm::vec3 getAcceleration();
 		bool inUse;
 	private:
 		// Transformation variables

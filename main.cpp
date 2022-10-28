@@ -16,6 +16,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include "particle.hpp"
 #include "particlefgen.hpp"
+#include "particlefpool.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -147,7 +148,8 @@ int main() {
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 
-	std::vector<particle> particles;
+	//std::vector<particle> particles;
+	particleForcePool particlepool;
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -246,6 +248,7 @@ int main() {
 			//std::cout << "yPos: " << yPos << std::endl;
 			//std::cout << "forceFactor: " << forceFactor << std::endl;
 			
+			/*
 			if(particles.size() > 0) {
 				for(int i = 0; i < particles.size(); i++) {
 					if(particles[i].inUse == true) {
@@ -256,8 +259,14 @@ int main() {
 					}
 				}
 			}
+			*/
+			if(particlepool.getSize() > 0) {
+				particlepool.draw(planet);
+				particlepool.updateForces(deltaTime);
+			}
 
 			if(spawnEnabled==true) {
+				//particle fixedPoint(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 				totesNew.setPosition(glm::vec3(0.0f));
 				totesNew.setParticleParams(particleType);
@@ -266,22 +275,28 @@ int main() {
 				{
 				case BASIC:
 				{
-					SpringParticle springParticle(&totesNew,10.0f,10.0f);
+					particleSpring springParticle(&totesNew,10.0f,10.0f);
+					particlepool.add(&totesNew, &springParticle);
 				}
 					break;
 				case ANCHOR: {
 					glm::vec3 temp = totesNew.getPosition();
-					AnchoredSpring anchoredSpring(&temp, 10.0f, 10.0f);
+					particleAnchoredSpring anchoredSpring(&temp, 10.0f, 10.0f);
+					particlepool.add(&totesNew, &anchoredSpring);
 				}
 					break;
 				case ELASTIC: {
-					ElasticBungee elasticBungee(&totesNew, 10.0f, 10.0f);
+					particleElasticBungee elasticBungee(&totesNew, 10.0f, 10.0f);
+					particlepool.add(&totesNew, &elasticBungee);
 				}
 					break;
 				}
+				glm::vec3 acceleration = totesNew.getAcceleration();	
+				particleGravity gpart(acceleration);
 
 				totesNew.inUse = true;
-				particles.push_back(totesNew);
+				particlepool.add(&totesNew, &gpart);
+				//particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
 			}

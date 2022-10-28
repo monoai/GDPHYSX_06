@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-particleGravity::particleGravity(glm::vec3& gravity)
+particleGravity::particleGravity(glm::vec3& gravity) : gravity(gravity)
 {
 }
 
@@ -12,6 +12,10 @@ void particleGravity::updateForce(particle* particle, float dT) {
 	} 
 
 	particle->addForce(this->gravity * particle->getMass());
+}
+
+particleDrag::particleDrag(float k1, float k2) : k1(k1), k2(k2) {
+
 }
 
 void particleDrag::updateForce(particle *particle, float dT) {
@@ -26,11 +30,11 @@ void particleDrag::updateForce(particle *particle, float dT) {
 	particle->addForce(force);
 }
 
-SpringParticle::SpringParticle(particle* other, float springConstant, float restLength) {
+particleSpring::particleSpring(particle* other, float springConstant, float restLength) : other(other), springConstant(springConstant), restLength(restLength) {
 
 }
 
-void SpringParticle::updateForce(particle* particle, float duration) {
+void particleSpring::updateForce(particle* particle, float duration) {
 	glm::vec3 force;
 
 	force = particle->getPosition();
@@ -46,11 +50,11 @@ void SpringParticle::updateForce(particle* particle, float duration) {
 	particle->addForce(force);
 }
 
-AnchoredSpring::AnchoredSpring(glm::vec3* anchor, float springConstant, float restLength) {
+particleAnchoredSpring::particleAnchoredSpring(glm::vec3* anchor, float springConstant, float restLength) {
 
 }
 
-void AnchoredSpring::updateForce(particle* particle, float duration) {
+void particleAnchoredSpring::updateForce(particle* particle, float duration) {
 	glm::vec3 force;
 
 	force = particle->getPosition();
@@ -66,11 +70,11 @@ void AnchoredSpring::updateForce(particle* particle, float duration) {
 	particle->addForce(force);
 }
 
-ElasticBungee::ElasticBungee(particle* other, float springConstant, float restLength) {
+particleElasticBungee::particleElasticBungee(particle* other, float springConstant, float restLength) {
 
 }
 
-void ElasticBungee::updateForce(particle* particle, float duration) {
+void particleElasticBungee::updateForce(particle* particle, float duration) {
 	glm::vec3 force;
 
 	force = particle->getPosition();

@@ -9,9 +9,14 @@
 particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
 }
 
+//particle::particle(const particle &other) : trans(other.trans), normalTrans(other.normalTrans), modelTrans(other.modelTrans), inUse(other.inUse) {
+//}
+
+/*
 particle::~particle() {
 	std::cout << "Particle destroyed" << std::endl;
 }
+*/
 
 /* [UPDATE FUNCTION]
  * The function where all the calculations happens
@@ -47,7 +52,7 @@ void particle::update(float dT) {
 	//std::cout << "Life: " << life << std::endl;
 	if(life >= 2.5f) {
 		inUse = false;
-		this->~particle();
+		//this->~particle();
 	}
 }
 
@@ -186,4 +191,8 @@ glm::vec3 particle::getVelocity() {
 
 glm::vec3 particle::getPosition() {
 	return this->positionVector;
+}
+
+glm::vec3 particle::getAcceleration() {
+	return this->accelerationVector;
 }

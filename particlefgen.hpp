@@ -12,66 +12,51 @@ class particleForceGen {
 class particleGravity : public particleForceGen {
 	public:
 		particleGravity(glm::vec3 &gravity);
-		void updateForce(particle* particle, float dT);
+		virtual void updateForce(particle* particle, float dT);
+
 		glm::vec3 gravity = glm::vec3(0.0f);
 };
 
 class particleDrag : public particleForceGen {
 	public:
 		particleDrag(float k1, float k2);
-		void updateForce(particle* particle, float dT);
+		virtual void updateForce(particle* particle, float dT);
 
 		float k1;
 		float k2;
 };
 
-class SpringParticle : public particleForceGen
+class particleSpring : public particleForceGen
 {
+	public:
+		particleSpring(particle* other, float springConstant, float restLength);
+		virtual void updateForce(particle* particle, float duration);
 
-	particle* other;
-
-	float springConstant;
-
-	float restLength;
-
-public:
-
-	SpringParticle(particle* other, float springConstant, float restLength);
-
-	virtual void updateForce(particle* particle, float duration);
-
+		particle* other;
+		float springConstant;
+		float restLength;
 };
 
-class AnchoredSpring : public particleForceGen
+class particleAnchoredSpring : public particleForceGen
 {
-	glm::vec3* anchor;
+	public:
+		particleAnchoredSpring(glm::vec3* anchor, float springConstant, float restLength);
+		virtual void updateForce(particle* particle, float duration);
 
-	float springConstant;
-
-	float restLength;
-
-public:
-
-	AnchoredSpring(glm::vec3* anchor, float springConstant, float restLength);
-
-	virtual void updateForce(particle* particle, float duration);
-
+		glm::vec3* anchor;
+		float springConstant;
+		float restLength;
 };
 
-class ElasticBungee : public particleForceGen
+class particleElasticBungee : public particleForceGen
 {
-	particle* other;
+	public:
+		particleElasticBungee(particle* other, float springConstant, float restLength);
+		virtual void updateForce(particle* particle, float duration);
 
-	float springConstant;
-
-	float restLength;
-
-public:
-
-	ElasticBungee(particle* other, float springConstant, float restLength);
-
-	virtual void updateForce(particle* particle, float duration);
-
+		particle* other;
+		float springConstant;
+		float restLength;
 };
 
 #endif

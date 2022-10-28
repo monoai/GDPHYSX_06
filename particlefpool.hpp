@@ -7,6 +7,8 @@
 
 #include <vector>
 
+struct ObjData;
+
 class particleForcePool {
 	private:
 		struct particleForcePooler {
@@ -19,6 +21,8 @@ class particleForcePool {
 		void add(particle* _particle, particleForceGen *_fg);
 		void remove(particle* _particle, particleForceGen *_fg);
 		void clear(particle* _particle, particleForceGen *_fg);
+		void draw(ObjData obj);
+		int getSize();
 		void updateForces(float dT);
 };
 
