@@ -23,7 +23,10 @@ class particle {
 		void clearForceAccum();
 		void addForce(glm::vec3 force);
 		void setParticleParams(particleName name);
+
 		void setPosition(glm::vec3 vector);
+		glm::vec3 getPosition();
+
 		float getInverseMass();
 		void setMass(float mass);
 		float getMass();

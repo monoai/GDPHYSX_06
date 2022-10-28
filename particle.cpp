@@ -183,3 +183,7 @@ float particle::getMass() {
 glm::vec3 particle::getVelocity() {
 	return this->velocityVector;
 }
+
+glm::vec3 particle::getPosition() {
+	return this->positionVector;
+}
