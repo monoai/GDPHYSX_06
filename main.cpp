@@ -15,6 +15,7 @@
 #include "skybox.h"
 #include "glm/gtx/string_cast.hpp"
 #include "particle.hpp"
+#include "particlefgen.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -24,6 +25,9 @@ float forceFactor = 0.0f;
 bool forceEnabled = false;
 bool gravityEnabled = false;
 bool spawnEnabled = false;
+
+enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
+springType spring;
 
 particle::particleName particleType = particle::particleName::PISTOL;
 
@@ -257,6 +261,25 @@ int main() {
 				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
 				totesNew.setPosition(glm::vec3(0.0f));
 				totesNew.setParticleParams(particleType);
+
+				switch(spring)
+				{
+				case BASIC:
+				{
+					SpringParticle springParticle(&totesNew,10.0f,10.0f);
+				}
+					break;
+				case ANCHOR: {
+					glm::vec3 temp = totesNew.getPosition();
+					AnchoredSpring anchoredSpring(&temp, 10.0f, 10.0f);
+				}
+					break;
+				case ELASTIC: {
+					ElasticBungee elasticBungee(&totesNew, 10.0f, 10.0f);
+				}
+					break;
+				}
+
 				totesNew.inUse = true;
 				particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
@@ -326,7 +349,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	// 5 - Fireworks
 	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
-		particleType = particle::FIREWORK;
+		std::cout << "BASIC SPRING SET" << std::endl;
+		spring = BASIC;
+	}	
+	if(glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS) {
+		std::cout << "ANCHOR SPRING SET" << std::endl;
+		spring = ANCHOR;
+	}
+	if(glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS) {
+		std::cout << "ELASTIC SPRING SET" << std::endl;
+		spring = ELASTIC;
 	}
 }
 

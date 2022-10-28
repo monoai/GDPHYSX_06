@@ -2,6 +2,10 @@
 
 #include "glm/glm.hpp"
 
+particleGravity::particleGravity(glm::vec3& gravity)
+{
+}
+
 void particleGravity::updateForce(particle* particle, float dT) {
 	if(particle->getInverseMass() <= 0.0f) {
 		return;
@@ -22,6 +26,10 @@ void particleDrag::updateForce(particle *particle, float dT) {
 	particle->addForce(force);
 }
 
+SpringParticle::SpringParticle(particle* other, float springConstant, float restLength) {
+
+}
+
 void SpringParticle::updateForce(particle* particle, float duration) {
 	glm::vec3 force;
 
@@ -38,6 +46,10 @@ void SpringParticle::updateForce(particle* particle, float duration) {
 	particle->addForce(force);
 }
 
+AnchoredSpring::AnchoredSpring(glm::vec3* anchor, float springConstant, float restLength) {
+
+}
+
 void AnchoredSpring::updateForce(particle* particle, float duration) {
 	glm::vec3 force;
 
@@ -52,6 +64,10 @@ void AnchoredSpring::updateForce(particle* particle, float duration) {
 	force = glm::normalize(force);
 	force *= magnitude;
 	particle->addForce(force);
+}
+
+ElasticBungee::ElasticBungee(particle* other, float springConstant, float restLength) {
+
 }
 
 void ElasticBungee::updateForce(particle* particle, float duration) {
