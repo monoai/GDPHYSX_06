@@ -154,27 +154,21 @@
     <None Include="Shaders\skybox_vertex.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnchoredSpring.hpp" />
-    <ClInclude Include="ElasticBungee.hpp" />
     <ClInclude Include="obj_mesh.h" />
     <ClInclude Include="particle.hpp" />
     <ClInclude Include="particlefgen.hpp" />
     <ClInclude Include="particlefpool.hpp" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="skybox.h" />
-    <ClInclude Include="SpringParticle.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnchoredSpring.cpp" />
-    <ClCompile Include="ElasticBungee.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_mesh.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particlefgen.cpp" />
     <ClCompile Include="particlefpool.cpp" />
-    <ClCompile Include="SpringParticle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -55,15 +55,6 @@
     <ClInclude Include="particlefpool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpringParticle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnchoredSpring.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ElasticBungee.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -79,15 +70,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="particlefpool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpringParticle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnchoredSpring.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ElasticBungee.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,4 +25,53 @@ class particleDrag : public particleForceGen {
 		float k2;
 };
 
+class SpringParticle : public particleForceGen
+{
+
+	particle* other;
+
+	float springConstant;
+
+	float restLength;
+
+public:
+
+	SpringParticle(particle* other, float springConstant, float restLength);
+
+	virtual void updateForce(particle* particle, float duration);
+
+};
+
+class AnchoredSpring : public particleForceGen
+{
+	glm::vec3* anchor;
+
+	float springConstant;
+
+	float restLength;
+
+public:
+
+	AnchoredSpring(glm::vec3* anchor, float springConstant, float restLength);
+
+	virtual void updateForce(particle* particle, float duration);
+
+};
+
+class ElasticBungee : public particleForceGen
+{
+	particle* other;
+
+	float springConstant;
+
+	float restLength;
+
+public:
+
+	ElasticBungee(particle* other, float springConstant, float restLength);
+
+	virtual void updateForce(particle* particle, float duration);
+
+};
+
 #endif
