@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-particleGravity::particleGravity(glm::vec3* gravity) : gravity(*gravity)
+particleGravity::particleGravity(glm::vec3& gravity) : gravity(gravity)
 {
 }
 

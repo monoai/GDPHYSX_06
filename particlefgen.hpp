@@ -11,7 +11,7 @@ class particleForceGen {
 
 class particleGravity : public particleForceGen {
 	public:
-		particleGravity(glm::vec3 *gravity);
+		particleGravity(glm::vec3& gravity);
 		virtual void updateForce(particle* particle, float dT);
 
 		glm::vec3 gravity = glm::vec3(0.0f);

@@ -295,7 +295,7 @@ int main() {
 				}
 				*/
 				glm::vec3 acceleration = totesNew.getAcceleration();	
-				particleGravity gpart(&acceleration);
+				particleGravity gpart(acceleration);
 
 				totesNew.inUse = true;
 				particlepool.add(&totesNew, &gpart);
