@@ -261,16 +261,18 @@ int main() {
 			}
 			*/
 			if(particlepool.getSize() > 0) {
+				//particlepool.updateForces(deltaTime);
+				particlepool.update(deltaTime);
 				particlepool.draw(planet);
-				particlepool.updateForces(deltaTime);
 			}
 
 			if(spawnEnabled==true) {
 				//particle fixedPoint(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
+				particle totesNew(&normalTransformLoc, &modelTransformLoc, planet);
 				totesNew.setPosition(glm::vec3(0.0f));
 				totesNew.setParticleParams(particleType);
-
+				
+				/*
 				switch(spring)
 				{
 				case BASIC:
@@ -291,8 +293,9 @@ int main() {
 				}
 					break;
 				}
+				*/
 				glm::vec3 acceleration = totesNew.getAcceleration();	
-				particleGravity gpart(acceleration);
+				particleGravity gpart(&acceleration);
 
 				totesNew.inUse = true;
 				particlepool.add(&totesNew, &gpart);

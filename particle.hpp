@@ -11,8 +11,8 @@ struct ObjData;
 
 class particle {
 	public:
-		particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
-		//~particle();
+		particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
+		~particle();
 		//particle(const particle &other);
 
 		enum particleName {
@@ -36,7 +36,7 @@ class particle {
 		bool inUse;
 	private:
 		// Transformation variables
-		glm::mat4& trans;
+		glm::mat4 trans;
 		GLuint& normalTrans;
 		GLuint& modelTrans;
 

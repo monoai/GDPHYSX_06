@@ -1,22 +1,28 @@
 #include "particle.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+//#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <cmath>
 
 #include "obj_mesh.h"
 
 
-particle::particle(glm::mat4* transMat, GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : trans(*transMat), normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
+particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
+	this->trans = glm::mat4(1.0f);
+	std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
+	//std::cout << "init normal trans: " << glm::to_string(this->normalTrans) << std::endl;
+	//std::cout << "init model trans: " << glm::to_string(this->modelTrans) << std::endl;
 }
 
 //particle::particle(const particle &other) : trans(other.trans), normalTrans(other.normalTrans), modelTrans(other.modelTrans), inUse(other.inUse) {
 //}
 
-/*
+
 particle::~particle() {
 	std::cout << "Particle destroyed" << std::endl;
 }
-*/
+
 
 /* [UPDATE FUNCTION]
  * The function where all the calculations happens
@@ -49,10 +55,10 @@ void particle::update(float dT) {
 	//std::cout << "Time " << dT << std::endl;
 	life += dT;
 	//[Debug]
-	//std::cout << "Life: " << life << std::endl;
+	std::cout << "Life: " << life << std::endl;
 	if(life >= 2.5f) {
 		inUse = false;
-		//this->~particle();
+		this->~particle();
 	}
 }
 
@@ -62,6 +68,8 @@ void particle::update(float dT) {
  * can be done on a model are already handled by this function.
  */
 void particle::draw(ObjData obj) {
+	// [DEBUG]
+	std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::mat4(1.0f);
 	// [DEBUG]
 	//std::cout << "currxPos set: " << this->xPos << std::endl;
