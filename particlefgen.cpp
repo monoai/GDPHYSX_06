@@ -78,14 +78,12 @@ void particleElasticBungee::updateForce(particle* particle, float duration) {
 	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
-	force -= other->getPosition();
+	force -= this->other->getPosition();
 
 	float magnitude = glm::length(force);
+	if (magnitude <= this->restLength) return;
 
-	magnitude = std::abs(magnitude - restLength);
-	if (magnitude <= restLength) return;
-
-	magnitude = this->springConstant * (restLength - magnitude);
+	magnitude = this->springConstant * (this->restLength - magnitude);
 
 	force = glm::normalize(force);
 	force *= -magnitude;

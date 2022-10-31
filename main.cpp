@@ -22,11 +22,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 // Global variables
-float forceFactor = 0.0f;
-bool forceEnabled = false;
-bool gravityEnabled = false;
 bool spawnEnabled = false;
 
+// Enum Declaration
 enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
 springType spring;
 
@@ -231,7 +229,6 @@ int main() {
 		//-----draw particle-----
 		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
-
 		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
 		// Update Loop
@@ -242,11 +239,6 @@ int main() {
 		while(frameTime >0.0f) {
 			float deltaTime = std::min(frameTime, dT);
 			frameTime -= deltaTime;
-
-			//Debug
-			//std::cout << "xPos: " << xPos << std::endl;
-			//std::cout << "yPos: " << yPos << std::endl;
-			//std::cout << "forceFactor: " << forceFactor << std::endl;
 			
 			/*
 			if(particles.size() > 0) {
@@ -277,11 +269,11 @@ int main() {
 				totesNew->setParticleParams(particleType);
 				totesNew->inUse = true;
 
-				/*	
+				///*	
 				glm::vec3 acceleration = totesNew->getAcceleration();	
 				particleGravity* gpart = new particleGravity(acceleration);
 				particlepool.add(totesNew, gpart);
-				*/
+				//*/
 				
 				switch(spring)
 				{
@@ -290,25 +282,26 @@ int main() {
 					particlepool.add(totesNew, springParticle);
 					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
 					//particlepool.add(fixedPoint, springParticle);
-				}
+					}
 					break;
 				case ANCHOR: {
 					glm::vec3 fixedPos = fixedPoint->getPosition();
 					particleAnchoredSpring* anchoredSpring = new particleAnchoredSpring(fixedPos, 2.0f, 3.0f);
 					particlepool.add(totesNew, anchoredSpring);
-				}
+					}
 					break;
 				case ELASTIC: {
 					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 2.0f, 3.0f);
 					particlepool.add(totesNew, elasticBungee);
-				}
+					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,3.0f);
+					//particlepool.add(fixedPoint, elasticBungeeb);
+					}
+				case NONE: {
+					// Do nothing
+					}
 					break;
 				}
 
-				//glm::vec3 acceleration = totesNew->getAcceleration();	
-				//particleGravity* gpart = new particleGravity(acceleration);
-
-				//particlepool.add(totesNew, gpart);
 				//particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
@@ -365,7 +358,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// 2 - Artillery
 	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
 		particleType = particle::ARTILLERY;
-
 	}
 	// 3 - Fireball
 	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
@@ -387,6 +379,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS) {
 		std::cout << "ELASTIC SPRING SET" << std::endl;
 		spring = ELASTIC;
+	}
+	if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) {
+		std::cout << "SPRING REMOVED" << std::endl;
+		spring = NONE;
 	}
 }
 
