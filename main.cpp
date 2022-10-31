@@ -273,34 +273,35 @@ int main() {
 				particle* totesNew = new particle(&normalTransformLoc, &modelTransformLoc, planet);
 				totesNew->setPosition(glm::vec3(0.0f));
 				totesNew->setParticleParams(particleType);
+				totesNew->inUse = true;
+
+				glm::vec3 acceleration = totesNew->getAcceleration();	
+				particleGravity* gpart = new particleGravity(acceleration);
 				
-				/*
 				switch(spring)
 				{
-				case BASIC:
-				{
-					particleSpring springParticle(&totesNew,10.0f,10.0f);
-					particlepool.add(totesNew, &springParticle);
+				case BASIC: {
+					particleSpring* springParticle = new particleSpring(totesNew,10.0f,10.0f);
+					particlepool.add(totesNew, springParticle);
 				}
 					break;
 				case ANCHOR: {
-					glm::vec3 temp = totesNew.getPosition();
-					particleAnchoredSpring anchoredSpring(&temp, 10.0f, 10.0f);
-					particlepool.add(totesNew, &anchoredSpring);
+					glm::vec3 temp = totesNew->getPosition();
+					particleAnchoredSpring* anchoredSpring = new particleAnchoredSpring(&temp, 10.0f, 10.0f);
+					particlepool.add(totesNew, anchoredSpring);
 				}
 					break;
 				case ELASTIC: {
-					particleElasticBungee elasticBungee(&totesNew, 10.0f, 10.0f);
-					particlepool.add(totesNew, &elasticBungee);
+					particleElasticBungee* elasticBungee = new particleElasticBungee(totesNew, 10.0f, 10.0f);
+					particlepool.add(totesNew, elasticBungee);
 				}
 					break;
 				}
-				*/
-				glm::vec3 acceleration = totesNew->getAcceleration();	
-				particleGravity gpart(acceleration);
 
-				totesNew->inUse = true;
-				particlepool.add(totesNew, &gpart);
+				//glm::vec3 acceleration = totesNew->getAcceleration();	
+				//particleGravity* gpart = new particleGravity(acceleration);
+
+				particlepool.add(totesNew, gpart);
 				//particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;

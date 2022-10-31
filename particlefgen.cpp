@@ -19,7 +19,7 @@ particleDrag::particleDrag(float k1, float k2) : k1(k1), k2(k2) {
 }
 
 void particleDrag::updateForce(particle *particle, float dT) {
-	glm::vec3 force;
+	glm::vec3 force = glm::vec3(0.0f);
 	force = particle->getVelocity();
 
 	float dragCoeff = glm::length(force);
@@ -35,15 +35,15 @@ particleSpring::particleSpring(particle* other, float springConstant, float rest
 }
 
 void particleSpring::updateForce(particle* particle, float duration) {
-	glm::vec3 force;
+	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
-	force -= other->getPosition();
+	force -= this->other->getPosition();
 
 	float magnitude = force.length();
 
 	magnitude = std::abs(magnitude - restLength);
-	magnitude *= springConstant;
+	magnitude *= this->springConstant;
 
 	force = glm::normalize(force);
 	force *= magnitude;
@@ -55,7 +55,7 @@ particleAnchoredSpring::particleAnchoredSpring(glm::vec3* anchor, float springCo
 }
 
 void particleAnchoredSpring::updateForce(particle* particle, float duration) {
-	glm::vec3 force;
+	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
 	force -= *anchor;
@@ -75,7 +75,7 @@ particleElasticBungee::particleElasticBungee(particle* other, float springConsta
 }
 
 void particleElasticBungee::updateForce(particle* particle, float duration) {
-	glm::vec3 force;
+	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
 	force -= other->getPosition();

@@ -35,7 +35,7 @@ void particle::update(float dT) {
 	// Updates the position
 	this->positionVector += this->velocityVector * dT;
 
-	// Calculates the acceleration
+	// Calculates the acceleration and the force.
 	glm::vec3 newAccel = this->accelerationVector;
 	newAccel += this->forceAccumVec * this->inverseMass; 
 	
@@ -76,6 +76,7 @@ void particle::draw(ObjData obj) {
 	// [DEBUG]
 	//std::cout << "currxPos set: " << this->xPos << std::endl;
 	//std::cout << "curryPos set: " << yPos << std::endl;
+	std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
 	this->trans = glm::translate(this->trans, positionVector);
 	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
