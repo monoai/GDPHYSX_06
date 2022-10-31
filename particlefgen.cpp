@@ -2,8 +2,8 @@
 
 #include "glm/glm.hpp"
 
-particleGravity::particleGravity(glm::vec3& gravity) : gravity(gravity)
-{
+particleGravity::particleGravity(glm::vec3& gravity) : gravity(gravity) {
+
 }
 
 void particleGravity::updateForce(particle* particle, float dT) {
@@ -50,7 +50,7 @@ void particleSpring::updateForce(particle* particle, float duration) {
 	particle->addForce(force);
 }
 
-particleAnchoredSpring::particleAnchoredSpring(glm::vec3* anchor, float springConstant, float restLength) {
+particleAnchoredSpring::particleAnchoredSpring(glm::vec3 anchor, float springConstant, float restLength) : anchor(anchor), springConstant(springConstant), restLength(restLength) {
 
 }
 
@@ -58,19 +58,19 @@ void particleAnchoredSpring::updateForce(particle* particle, float duration) {
 	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
-	force -= *anchor;
+	force -= this->anchor;
 
 	float magnitude = glm::length(force);
 
 	magnitude = std::abs(magnitude - restLength);
-	magnitude *= springConstant;
+	magnitude *= this->springConstant;
 
 	force = glm::normalize(force);
-	force *= magnitude;
+	force *= -magnitude;
 	particle->addForce(force);
 }
 
-particleElasticBungee::particleElasticBungee(particle* other, float springConstant, float restLength) {
+particleElasticBungee::particleElasticBungee(particle* other, float springConstant, float restLength) : other(other), springConstant(springConstant), restLength(restLength) {
 
 }
 
@@ -85,9 +85,9 @@ void particleElasticBungee::updateForce(particle* particle, float duration) {
 	magnitude = std::abs(magnitude - restLength);
 	if (magnitude <= restLength) return;
 
-	magnitude = springConstant * (restLength - magnitude);
+	magnitude = this->springConstant * (restLength - magnitude);
 
 	force = glm::normalize(force);
-	force *= magnitude;
+	force *= -magnitude;
 	particle->addForce(force);
 }

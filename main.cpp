@@ -293,13 +293,13 @@ int main() {
 				}
 					break;
 				case ANCHOR: {
-					glm::vec3 temp = totesNew->getPosition();
-					particleAnchoredSpring* anchoredSpring = new particleAnchoredSpring(&temp, 10.0f, 10.0f);
+					glm::vec3 fixedPos = fixedPoint->getPosition();
+					particleAnchoredSpring* anchoredSpring = new particleAnchoredSpring(fixedPos, 2.0f, 3.0f);
 					particlepool.add(totesNew, anchoredSpring);
 				}
 					break;
 				case ELASTIC: {
-					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 10.0f, 10.0f);
+					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 2.0f, 3.0f);
 					particlepool.add(totesNew, elasticBungee);
 				}
 					break;

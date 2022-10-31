@@ -40,10 +40,10 @@ class particleSpring : public particleForceGen
 class particleAnchoredSpring : public particleForceGen
 {
 	public:
-		particleAnchoredSpring(glm::vec3* anchor, float springConstant, float restLength);
+		particleAnchoredSpring(glm::vec3 anchor, float springConstant, float restLength);
 		virtual void updateForce(particle* particle, float duration);
 
-		glm::vec3* anchor;
+		glm::vec3 anchor;
 		float springConstant;
 		float restLength;
 };
