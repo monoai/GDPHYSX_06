@@ -18,10 +18,11 @@ particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjDat
 //particle::particle(const particle &other) : trans(other.trans), normalTrans(other.normalTrans), modelTrans(other.modelTrans), inUse(other.inUse) {
 //}
 
-
+/*
 particle::~particle() {
 	std::cout << "Particle destroyed" << std::endl;
 }
+*/
 
 
 /* [UPDATE FUNCTION]
@@ -58,7 +59,8 @@ void particle::update(float dT) {
 	std::cout << "Life: " << life << std::endl;
 	if(life >= 2.5f) {
 		inUse = false;
-		this->~particle();
+		// use the pool to remove this particular particle
+		// delete this; works but it's very unsafe
 	}
 }
 

@@ -148,7 +148,7 @@ int main() {
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 
-	//std::vector<particle> particles;
+	std::vector<particle> particles;
 	particleForcePool particlepool;
 
 	glfwSetKeyCallback(window, key_callback);
@@ -260,17 +260,19 @@ int main() {
 				}
 			}
 			*/
+			
 			if(particlepool.getSize() > 0) {
-				//particlepool.updateForces(deltaTime);
+				particlepool.updateForces(deltaTime);
 				particlepool.update(deltaTime);
 				particlepool.draw(planet);
 			}
+			
 
 			if(spawnEnabled==true) {
 				//particle fixedPoint(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-				particle totesNew(&normalTransformLoc, &modelTransformLoc, planet);
-				totesNew.setPosition(glm::vec3(0.0f));
-				totesNew.setParticleParams(particleType);
+				particle* totesNew = new particle(&normalTransformLoc, &modelTransformLoc, planet);
+				totesNew->setPosition(glm::vec3(0.0f));
+				totesNew->setParticleParams(particleType);
 				
 				/*
 				switch(spring)
@@ -278,27 +280,27 @@ int main() {
 				case BASIC:
 				{
 					particleSpring springParticle(&totesNew,10.0f,10.0f);
-					particlepool.add(&totesNew, &springParticle);
+					particlepool.add(totesNew, &springParticle);
 				}
 					break;
 				case ANCHOR: {
 					glm::vec3 temp = totesNew.getPosition();
 					particleAnchoredSpring anchoredSpring(&temp, 10.0f, 10.0f);
-					particlepool.add(&totesNew, &anchoredSpring);
+					particlepool.add(totesNew, &anchoredSpring);
 				}
 					break;
 				case ELASTIC: {
 					particleElasticBungee elasticBungee(&totesNew, 10.0f, 10.0f);
-					particlepool.add(&totesNew, &elasticBungee);
+					particlepool.add(totesNew, &elasticBungee);
 				}
 					break;
 				}
 				*/
-				glm::vec3 acceleration = totesNew.getAcceleration();	
+				glm::vec3 acceleration = totesNew->getAcceleration();	
 				particleGravity gpart(acceleration);
 
-				totesNew.inUse = true;
-				particlepool.add(&totesNew, &gpart);
+				totesNew->inUse = true;
+				particlepool.add(totesNew, &gpart);
 				//particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
