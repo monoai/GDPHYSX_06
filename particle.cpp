@@ -74,8 +74,6 @@ void particle::draw(ObjData obj) {
 	std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::mat4(1.0f);
 	// [DEBUG]
-	//std::cout << "currxPos set: " << this->xPos << std::endl;
-	//std::cout << "curryPos set: " << yPos << std::endl;
 	std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
 	this->trans = glm::translate(this->trans, positionVector);
 	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));

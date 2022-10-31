@@ -269,20 +269,27 @@ int main() {
 			
 
 			if(spawnEnabled==true) {
-				//particle fixedPoint(&trans, &normalTransformLoc, &modelTransformLoc, planet);
+				particle* fixedPoint = new particle(&normalTransformLoc, &modelTransformLoc, planet);
+				fixedPoint->setPosition(glm::vec3(1.0f,1.0f,0.0f));
+
 				particle* totesNew = new particle(&normalTransformLoc, &modelTransformLoc, planet);
-				totesNew->setPosition(glm::vec3(0.0f));
+				totesNew->setPosition(glm::vec3(0.5,0.5f,0.0f));
 				totesNew->setParticleParams(particleType);
 				totesNew->inUse = true;
 
+				/*	
 				glm::vec3 acceleration = totesNew->getAcceleration();	
 				particleGravity* gpart = new particleGravity(acceleration);
+				particlepool.add(totesNew, gpart);
+				*/
 				
 				switch(spring)
 				{
 				case BASIC: {
-					particleSpring* springParticle = new particleSpring(totesNew,10.0f,10.0f);
+					particleSpring* springParticle = new particleSpring(fixedPoint,2.0f,3.0f);
 					particlepool.add(totesNew, springParticle);
+					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
+					//particlepool.add(fixedPoint, springParticle);
 				}
 					break;
 				case ANCHOR: {
@@ -292,7 +299,7 @@ int main() {
 				}
 					break;
 				case ELASTIC: {
-					particleElasticBungee* elasticBungee = new particleElasticBungee(totesNew, 10.0f, 10.0f);
+					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 10.0f, 10.0f);
 					particlepool.add(totesNew, elasticBungee);
 				}
 					break;
@@ -301,7 +308,7 @@ int main() {
 				//glm::vec3 acceleration = totesNew->getAcceleration();	
 				//particleGravity* gpart = new particleGravity(acceleration);
 
-				particlepool.add(totesNew, gpart);
+				//particlepool.add(totesNew, gpart);
 				//particles.push_back(totesNew);
 				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
