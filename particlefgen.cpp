@@ -86,6 +86,6 @@ void particleElasticBungee::updateForce(particle* particle, float duration) {
 	magnitude = this->springConstant * (this->restLength - magnitude);
 
 	force = glm::normalize(force);
-	force *= -magnitude;
+	force *= magnitude;
 	particle->addForce(force);
 }

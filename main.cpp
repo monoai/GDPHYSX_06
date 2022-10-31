@@ -146,7 +146,7 @@ int main() {
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 
-	std::vector<particle> particles;
+	//std::vector<particle> particles;
 	particleForcePool particlepool;
 
 	glfwSetKeyCallback(window, key_callback);
@@ -265,15 +265,15 @@ int main() {
 				fixedPoint->setPosition(glm::vec3(1.0f,1.0f,0.0f));
 
 				particle* totesNew = new particle(&normalTransformLoc, &modelTransformLoc, planet);
-				totesNew->setPosition(glm::vec3(0.5,0.5f,0.0f));
 				totesNew->setParticleParams(particleType);
+				totesNew->setPosition(glm::vec3(6.5,0.5f,0.0f));
 				totesNew->inUse = true;
 
-				///*	
+				/*	
 				glm::vec3 acceleration = totesNew->getAcceleration();	
 				particleGravity* gpart = new particleGravity(acceleration);
 				particlepool.add(totesNew, gpart);
-				//*/
+				*/
 				
 				switch(spring)
 				{
@@ -291,9 +291,9 @@ int main() {
 					}
 					break;
 				case ELASTIC: {
-					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 2.0f, 3.0f);
+					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 2.0f, 5.0f);
 					particlepool.add(totesNew, elasticBungee);
-					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,3.0f);
+					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,5.0f);
 					//particlepool.add(fixedPoint, elasticBungeeb);
 					}
 				case NONE: {
