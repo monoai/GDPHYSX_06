@@ -10,13 +10,12 @@
 
 class particle {
 	public:
-		particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
-		//~particle();
-		//particle(const particle &other);
-
+		bool inUse;
 		enum particleName {
 			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
 		};
+
+		particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
 
 		void draw();
 		void update(float dT);
@@ -32,7 +31,6 @@ class particle {
 		float getMass();
 		glm::vec3 getVelocity();
 		glm::vec3 getAcceleration();
-		bool inUse;
 	private:
 		// Transformation variables
 		glm::mat4 trans;

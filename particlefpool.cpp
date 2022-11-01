@@ -24,6 +24,7 @@ void particleForcePool::updateForces(float dT) {
 	for(int i = 0; i < this->getSize(); i++) {
 		//std::cout << "curr iteration updF: " << i << std::endl;
 		this->pool[i]._fg->updateForce(this->pool[i]._particle, dT);
+		//this->pool[i]._particle->update(dT);
 	}
 }
 
