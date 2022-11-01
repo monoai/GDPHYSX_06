@@ -259,7 +259,7 @@ int main() {
 			if(particlepool.getSize() > 0) {
 				particlepool.updateForces(deltaTime);
 				particlepool.update(deltaTime);
-				particlepool.draw(planet);
+				particlepool.draw();
 				particlepool.checkLife();
 			}
 			

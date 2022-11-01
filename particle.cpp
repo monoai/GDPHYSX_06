@@ -5,11 +5,9 @@
 #include <glm/gtx/string_cast.hpp>
 #include <cmath>
 
-#include "obj_mesh.h"
-
-
 particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
 	this->trans = glm::mat4(1.0f);
+	this->obj = object;
 	//std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
 }
 
@@ -49,7 +47,7 @@ void particle::update(float dT) {
  * are happening. All the translations, rotations, scales that
  * can be done on a model are already handled by this function.
  */
-void particle::draw(ObjData obj) {
+void particle::draw() {
 	// [DEBUG]
 	//std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::mat4(1.0f);

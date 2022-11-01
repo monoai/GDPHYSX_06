@@ -24,7 +24,7 @@ class particleForcePool {
 		void clear(particle* _particle, particleForceGen *_fg);
 		void update(float dT);
 		void updateForces(float dT);
-		void draw(ObjData obj);
+		void draw();
 		void checkLife();
 		int getSize();
 		void getContents();

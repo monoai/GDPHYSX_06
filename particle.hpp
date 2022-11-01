@@ -5,9 +5,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>
-//#include "obj_mesh.h"
 
-struct ObjData;
+#include "obj_mesh.h"
 
 class particle {
 	public:
@@ -19,7 +18,7 @@ class particle {
 			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
 		};
 
-		void draw(ObjData obj);
+		void draw();
 		void update(float dT);
 		void clearForceAccum();
 		void addForce(glm::vec3 force);
@@ -52,6 +51,7 @@ class particle {
 		glm::vec3 forceAccumVec = glm::vec3(0.0f);
 
 		// Particle properties
+		ObjData obj;
 		float inverseMass = 0.0f;
 		float mass = 0.0f;
 		float damping = 0.0f;
