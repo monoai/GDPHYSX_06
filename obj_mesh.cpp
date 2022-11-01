@@ -92,7 +92,7 @@ void obj_mesh::LoadObjFile(ObjData* objData, std::string filename) {
 		inputfile.c_str(),
 		baseDir.c_str()
 	);
-	if (!err.empty()) {
+	if (!err.empty() || !isSuccess) {
 		std::cerr << err << std::endl;
 	}
 
@@ -121,9 +121,9 @@ void obj_mesh::LoadObjToMemory(ObjData* objData, GLfloat scaleFactor, GLfloat tO
 
 	}*/
 
-	for (int i = 0; i < objData->shapes.size(); i++) {
+	for (long unsigned int i = 0; i < objData->shapes.size(); i++) {
 		tinyobj::shape_t shape = objData->shapes[i];
-		for (int j = 0; j < shape.mesh.indices.size(); j++) {
+		for (long unsigned int j = 0; j < shape.mesh.indices.size(); j++) {
 			tinyobj::index_t idx = shape.mesh.indices[j];
 
 			VertexData vertexData;
@@ -158,9 +158,9 @@ void obj_mesh::LoadObjToMemory(ObjData* objData, GLfloat scaleFactor, GLfloat tO
 
 	// generate  normals
 	if (objData->attrib.normals.size() == 0) {
-		for (int i = 0; i < vertexList.size() / 3; i++)
+		for (long unsigned int i = 0; i < vertexList.size() / 3; i++)
 		{
-			int idx = i * 3;
+			long unsigned int idx = i * 3;
 			glm::vec3 normal = glm::normalize(glm::cross(vertexList[idx + 1].position - vertexList[idx].position, vertexList[idx + 2].position - vertexList[idx].position));
 			vertexList[idx].normal = vertexList[idx + 2].normal = vertexList[idx + 1].normal = normal;
 		}
