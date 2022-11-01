@@ -6,7 +6,7 @@ particleGravity::particleGravity(glm::vec3& gravity) : gravity(gravity) {
 
 }
 
-void particleGravity::updateForce(particle* particle, float dT) {
+void particleGravity::updateForce(std::shared_ptr<particle> particle, float dT) {
 	if(particle->getInverseMass() <= 0.0f) {
 		return;
 	} 
@@ -18,7 +18,7 @@ particleDrag::particleDrag(float k1, float k2) : k1(k1), k2(k2) {
 
 }
 
-void particleDrag::updateForce(particle *particle, float dT) {
+void particleDrag::updateForce(std::shared_ptr<particle> particle, float dT) {
 	glm::vec3 force = glm::vec3(0.0f);
 	force = particle->getVelocity();
 
@@ -30,11 +30,11 @@ void particleDrag::updateForce(particle *particle, float dT) {
 	particle->addForce(force);
 }
 
-particleSpring::particleSpring(particle* other, float springConstant, float restLength) : other(other), springConstant(springConstant), restLength(restLength) {
+particleSpring::particleSpring(std::shared_ptr<particle> other, float springConstant, float restLength) : other(other), springConstant(springConstant), restLength(restLength) {
 
 }
 
-void particleSpring::updateForce(particle* particle, float duration) {
+void particleSpring::updateForce(std::shared_ptr<particle> particle, float duration) {
 	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
@@ -54,7 +54,7 @@ particleAnchoredSpring::particleAnchoredSpring(glm::vec3 anchor, float springCon
 
 }
 
-void particleAnchoredSpring::updateForce(particle* particle, float duration) {
+void particleAnchoredSpring::updateForce(std::shared_ptr<particle> particle, float duration) {
 	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();
@@ -70,11 +70,11 @@ void particleAnchoredSpring::updateForce(particle* particle, float duration) {
 	particle->addForce(force);
 }
 
-particleElasticBungee::particleElasticBungee(particle* other, float springConstant, float restLength) : other(other), springConstant(springConstant), restLength(restLength) {
+particleElasticBungee::particleElasticBungee(std::shared_ptr<particle> other, float springConstant, float restLength) : other(other), springConstant(springConstant), restLength(restLength) {
 
 }
 
-void particleElasticBungee::updateForce(particle* particle, float duration) {
+void particleElasticBungee::updateForce(std::shared_ptr<particle> particle, float duration) {
 	glm::vec3 force = glm::vec3(0.0f);
 
 	force = particle->getPosition();

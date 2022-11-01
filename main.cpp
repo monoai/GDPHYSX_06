@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <algorithm>
+#include <memory>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #define STB_IMAGE_IMPLEMENTATION
@@ -23,6 +24,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 // Global variables
 bool spawnEnabled = false;
+bool debugI = false;
+bool debugO = false;
+bool debugP = false;
 
 // Enum Declaration
 enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
@@ -146,7 +150,6 @@ int main() {
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 
-	//std::vector<particle> particles;
 	particleForcePool particlepool;
 
 	glfwSetKeyCallback(window, key_callback);
@@ -257,28 +260,29 @@ int main() {
 				particlepool.updateForces(deltaTime);
 				particlepool.update(deltaTime);
 				particlepool.draw(planet);
+				particlepool.checkLife();
 			}
 			
 
 			if(spawnEnabled==true) {
-				particle* fixedPoint = new particle(&normalTransformLoc, &modelTransformLoc, planet);
+				std::shared_ptr<particle> fixedPoint(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 				fixedPoint->setPosition(glm::vec3(1.0f,1.0f,0.0f));
 
-				particle* totesNew = new particle(&normalTransformLoc, &modelTransformLoc, planet);
+				std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 				totesNew->setParticleParams(particleType);
 				totesNew->setPosition(glm::vec3(6.5,0.5f,0.0f));
 				totesNew->inUse = true;
 
-				/*	
+				///*	
 				glm::vec3 acceleration = totesNew->getAcceleration();	
-				particleGravity* gpart = new particleGravity(acceleration);
+				std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
 				particlepool.add(totesNew, gpart);
-				*/
+				//*/
 				
 				switch(spring)
 				{
 				case BASIC: {
-					particleSpring* springParticle = new particleSpring(fixedPoint,2.0f,3.0f);
+					std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint,2.0f,3.0f));
 					particlepool.add(totesNew, springParticle);
 					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
 					//particlepool.add(fixedPoint, springParticle);
@@ -286,12 +290,12 @@ int main() {
 					break;
 				case ANCHOR: {
 					glm::vec3 fixedPos = fixedPoint->getPosition();
-					particleAnchoredSpring* anchoredSpring = new particleAnchoredSpring(fixedPos, 2.0f, 3.0f);
+					std::shared_ptr<particleAnchoredSpring> anchoredSpring(new particleAnchoredSpring(fixedPos, 2.0f, 3.0f));
 					particlepool.add(totesNew, anchoredSpring);
 					}
 					break;
 				case ELASTIC: {
-					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 2.0f, 5.0f);
+					std::shared_ptr<particleElasticBungee> elasticBungee(new particleElasticBungee(fixedPoint, 2.0f, 5.0f));
 					particlepool.add(totesNew, elasticBungee);
 					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,5.0f);
 					//particlepool.add(fixedPoint, elasticBungeeb);
@@ -302,9 +306,18 @@ int main() {
 					break;
 				}
 
-				//particles.push_back(totesNew);
-				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
+			}
+
+			if(debugI==true) {
+				std::cout << "[DEBUG] - Pool size: " << particlepool.getSize() << std::endl;
+				debugI = false;
+			}
+
+			if(debugO==true) {
+				std::cout << "[DEBUG] - Pool contents: ";
+				particlepool.getContents();
+				debugO = false;
 			}
 		}
 		//--- stop drawing here ---
@@ -383,6 +396,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) {
 		std::cout << "SPRING REMOVED" << std::endl;
 		spring = NONE;
+	}
+
+	//DEBUG KEYS
+	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		debugI = true;
+	}
+	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+		debugO = true;
 	}
 }
 
