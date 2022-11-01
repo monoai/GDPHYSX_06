@@ -5,11 +5,9 @@
 #include <glm/gtx/string_cast.hpp>
 #include <cmath>
 
-#include "obj_mesh.h"
-
-
-particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
+particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
 	this->trans = glm::mat4(1.0f);
+	this->obj = object;
 	//std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
 }
 
@@ -49,7 +47,8 @@ void particle::update(float dT) {
  * are happening. All the translations, rotations, scales that
  * can be done on a model are already handled by this function.
  */
-void particle::draw(ObjData obj) {
+void particle::draw() {
+	glBindVertexArray(obj.vaoId);
 	// [DEBUG]
 	//std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::mat4(1.0f);
@@ -139,12 +138,31 @@ void particle::setParticleParams(particleName name) {
 
 }
 
+/* [addForce FUNCTION]
+ * The function where the accumulated force
+ * that was calculated elsewhere will be added
+ * in one final vector. Usually used outside
+ * of the function rather than here, but could also
+ * be used if an initial force is necessary.
+ */
 void particle::addForce(glm::vec3 force) {
 	this->forceAccumVec += force;
 }
 
+/* [clearForceAccum FUNCTION]
+ * Clears the accumulated force to ensure
+ * that the calculated force wouldn't be too strong 
+ * for other iterations
+ */
 void particle::clearForceAccum() {
 	this->forceAccumVec = glm::vec3(0.0f);
+}
+
+/* [getPosition FUNCTION]
+ * Returns the positionVector 
+ */
+glm::vec3 particle::getPosition() {
+	return this->positionVector;
 }
 
 /* [setPosition FUNCTION]
@@ -159,26 +177,39 @@ void particle::setPosition(glm::vec3 vector) {
 	this->positionVector = vector;
 }
 
+/* [getInverseMass FUNCTION]
+ * Returns the inverseMass
+ */
 float particle::getInverseMass() {
 	return this->inverseMass;
 }
 
+/* [setMass FUNCTION]
+ * Sets the mass by first calculating the inverse of the mass
+ * then assigns it to the inverseMass variable.
+ */
 void particle::setMass(float mass) {
 	this->inverseMass = (1.0f)/mass;
 }
 
+/* [getPosition FUNCTION]
+ * Returns the mass which is actually the calculated 
+ * version of the inverseMass.
+ */
 float particle::getMass() {
 	return (1.0f)/this->inverseMass;
 }
 
+/* [getVelocity FUNCTION]
+ * Returns the velocityVector.
+ */
 glm::vec3 particle::getVelocity() {
 	return this->velocityVector;
 }
 
-glm::vec3 particle::getPosition() {
-	return this->positionVector;
-}
-
+/* [getAcceleration FUNCTION]
+ * Returns the accelerationVector. 
+ */
 glm::vec3 particle::getAcceleration() {
 	return this->accelerationVector;
 }

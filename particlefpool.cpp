@@ -24,6 +24,7 @@ void particleForcePool::updateForces(float dT) {
 	for(int i = 0; i < this->getSize(); i++) {
 		//std::cout << "curr iteration updF: " << i << std::endl;
 		this->pool[i]._fg->updateForce(this->pool[i]._particle, dT);
+		//this->pool[i]._particle->update(dT);
 	}
 }
 
@@ -34,10 +35,10 @@ void particleForcePool::update(float dT) {
 	}
 }
 
-void particleForcePool::draw(ObjData obj) {
+void particleForcePool::draw() {
 	for(int i = 0; i < this->getSize(); i++) {
 		//std::cout << "curr iteration draw: " << i << std::endl;
-		this->pool[i]._particle->draw(obj);
+		this->pool[i]._particle->draw();
 	}
 }
 

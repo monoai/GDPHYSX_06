@@ -5,21 +5,19 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>
-//#include "obj_mesh.h"
 
-struct ObjData;
+#include "obj_mesh.h"
 
 class particle {
 	public:
-		particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
-		//~particle();
-		//particle(const particle &other);
-
+		bool inUse;
 		enum particleName {
 			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
 		};
 
-		void draw(ObjData obj);
+		particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
+
+		void draw();
 		void update(float dT);
 		void clearForceAccum();
 		void addForce(glm::vec3 force);
@@ -33,7 +31,6 @@ class particle {
 		float getMass();
 		glm::vec3 getVelocity();
 		glm::vec3 getAcceleration();
-		bool inUse;
 	private:
 		// Transformation variables
 		glm::mat4 trans;
@@ -52,6 +49,7 @@ class particle {
 		glm::vec3 forceAccumVec = glm::vec3(0.0f);
 
 		// Particle properties
+		ObjData obj;
 		float inverseMass = 0.0f;
 		float mass = 0.0f;
 		float damping = 0.0f;
