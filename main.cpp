@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <algorithm>
+#include <memory>
+#include <ctime>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #define STB_IMAGE_IMPLEMENTATION
@@ -15,15 +17,22 @@
 #include "skybox.h"
 #include "glm/gtx/string_cast.hpp"
 #include "particle.hpp"
+#include "particlefgen.hpp"
+#include "particlefpool.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 // Global variables
-float forceFactor = 0.0f;
-bool forceEnabled = false;
-bool gravityEnabled = false;
 bool spawnEnabled = false;
+bool debugI = false;
+bool debugO = false;
+bool debugP = false;
+
+// Enum Declaration
+enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
+springType spring;
+
 
 particle::particleName particleType = particle::particleName::PISTOL;
 
@@ -74,6 +83,7 @@ int main() {
 	// Load Skybox Model
 	std::vector<std::string> faces{
 		"right.png",
+
 		"left.png",
 		"top.png",
 		"bottom.png",
@@ -131,9 +141,11 @@ int main() {
 	glClearColor(0.4f, 0.4f, 0.0f, 0.0f);//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
 
 	// var for Time
-	float currentTime = glfwGetTime();
-	float prevTime = 0.0f;
-	float dT = 1.0f / 60.0f;
+	double currentTime = glfwGetTime();
+	double accumulator = 0.0;
+
+	double t = 0.0f;
+	const double dT = 0.01f;
 
 
 	//Camera vec vars
@@ -141,9 +153,10 @@ int main() {
 	glm::vec3 eye = glm::vec3(-7.0f, 11.5f, 33.0f);
 	glm::vec3 center = glm::vec3(0.5f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
 	bool ortho = false;
 
-	std::vector<particle> particles;
+	particleForcePool particlepool;
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -222,47 +235,91 @@ int main() {
 
 		DrawSkybox(skybox, skyboxShaderProgram, view, projection);
 
-		//-----draw particle-----
-		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
-
 		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
 		// Update Loop
-		// Loops via deltaTime and the Semi-fixed timestep design
-		float newTime = glfwGetTime();
-		float frameTime = newTime - currentTime;
+		// Loops via the accumulator and a variable step design.
+		double newTime = glfwGetTime();
+		double frameTime = newTime - currentTime;
+		if(frameTime > 0.25) {
+			frameTime = 0.25;
+		}
 		currentTime = newTime;
-		while(frameTime >0.0f) {
-			float deltaTime = std::min(frameTime, dT);
-			frameTime -= deltaTime;
 
-			//Debug
-			//std::cout << "xPos: " << xPos << std::endl;
-			//std::cout << "yPos: " << yPos << std::endl;
-			//std::cout << "forceFactor: " << forceFactor << std::endl;
+		accumulator += frameTime;
 			
-			if(particles.size() > 0) {
-				for(int i = 0; i < particles.size(); i++) {
-					if(particles[i].inUse == true) {
-						//particles[i].setPosition(xPos, yPos, zPos);
-						particles[i].update(deltaTime);
-						particles[i].draw(planet);
-						//std::cout << "Should be doing smth" << std::endl;
-					}
-				}
+		while(accumulator >= dT) {
+			if(particlepool.getSize() > 0) {
+				particlepool.updateForces(dT);
+				//particlepool.update(dT);
 			}
+			
 
 			if(spawnEnabled==true) {
-				particle totesNew(&trans, &normalTransformLoc, &modelTransformLoc, planet);
-				totesNew.setPosition(glm::vec3(0.0f));
-				totesNew.setParticleParams(particleType);
-				totesNew.inUse = true;
-				particles.push_back(totesNew);
-				//std::cout << "Pushed back!" << std::endl;
+				std::shared_ptr<particle> fixedPoint(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+				fixedPoint->setPosition(glm::vec3(1.0f,1.0f,0.0f));
+
+				std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+				totesNew->setParticleParams(particleType);
+				totesNew->setPosition(glm::vec3(6.5,0.5f,0.0f));
+				totesNew->inUse = true;
+
+				///*	
+				glm::vec3 acceleration = totesNew->getAcceleration();	
+				std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
+				particlepool.add(totesNew, gpart);
+				//*/
+				
+				switch(spring)
+				{
+				case BASIC: {
+			
+					std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint,2.0f,3.0f));
+					particlepool.add(totesNew, springParticle);
+					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
+					//particlepool.add(fixedPoint, springParticle);
+					}
+					break;
+				case ANCHOR: {
+					glm::vec3 fixedPos = fixedPoint->getPosition();
+					std::shared_ptr<particleAnchoredSpring> anchoredSpring(new particleAnchoredSpring(fixedPos, 2.0f, 3.0f));
+					particlepool.add(totesNew, anchoredSpring);
+					}
+					break;
+				case ELASTIC: {
+					std::shared_ptr<particleElasticBungee> elasticBungee(new particleElasticBungee(fixedPoint, 2.0f, 5.0f));
+					particlepool.add(totesNew, elasticBungee);
+					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,5.0f);
+					//particlepool.add(fixedPoint, elasticBungeeb);
+					}
+				case NONE: {
+					// Do nothing
+					}
+					break;
+				}
+
 				spawnEnabled = false;
 			}
+
+			if(debugI==true) {
+				std::cout << "[DEBUG] - Pool size: " << particlepool.getSize() << std::endl;
+				debugI = false;
+			}
+
+			if(debugO==true) {
+				std::cout << "[DEBUG] - Pool contents: ";
+				particlepool.getContents();
+				debugO = false;
+			}
+
+			t += dT;
+			accumulator -= dT;
 		}
+
+		particlepool.draw();
+		particlepool.checkLife();
+
 		//--- stop drawing here ---
 #pragma endregion
 
@@ -314,7 +371,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// 2 - Artillery
 	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
 		particleType = particle::ARTILLERY;
-
 	}
 	// 3 - Fireball
 	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
@@ -326,7 +382,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	// 5 - Fireworks
 	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
-		particleType = particle::FIREWORK;
+		std::cout << "BASIC SPRING SET" << std::endl;
+		spring = BASIC;
+	}	
+	if(glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS) {
+		std::cout << "ANCHOR SPRING SET" << std::endl;
+		spring = ANCHOR;
+	}
+	if(glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS) {
+		std::cout << "ELASTIC SPRING SET" << std::endl;
+		spring = ELASTIC;
+	}
+	if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) {
+		std::cout << "SPRING REMOVED" << std::endl;
+		spring = NONE;
+	}
+
+	//DEBUG KEYS
+	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		debugI = true;
+	}
+	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+		debugO = true;
 	}
 }
 
