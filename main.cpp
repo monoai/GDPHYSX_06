@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <algorithm>
+#include <memory>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #define STB_IMAGE_IMPLEMENTATION
@@ -261,10 +262,10 @@ int main() {
 			
 
 			if(spawnEnabled==true) {
-				particle* fixedPoint = new particle(&normalTransformLoc, &modelTransformLoc, planet);
+				std::shared_ptr<particle> fixedPoint(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 				fixedPoint->setPosition(glm::vec3(1.0f,1.0f,0.0f));
 
-				particle* totesNew = new particle(&normalTransformLoc, &modelTransformLoc, planet);
+				std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 				totesNew->setParticleParams(particleType);
 				totesNew->setPosition(glm::vec3(6.5,0.5f,0.0f));
 				totesNew->inUse = true;
@@ -278,7 +279,7 @@ int main() {
 				switch(spring)
 				{
 				case BASIC: {
-					particleSpring* springParticle = new particleSpring(fixedPoint,2.0f,3.0f);
+					std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint,2.0f,3.0f));
 					particlepool.add(totesNew, springParticle);
 					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
 					//particlepool.add(fixedPoint, springParticle);
@@ -286,12 +287,12 @@ int main() {
 					break;
 				case ANCHOR: {
 					glm::vec3 fixedPos = fixedPoint->getPosition();
-					particleAnchoredSpring* anchoredSpring = new particleAnchoredSpring(fixedPos, 2.0f, 3.0f);
+					std::shared_ptr<particleAnchoredSpring> anchoredSpring(new particleAnchoredSpring(fixedPos, 2.0f, 3.0f));
 					particlepool.add(totesNew, anchoredSpring);
 					}
 					break;
 				case ELASTIC: {
-					particleElasticBungee* elasticBungee = new particleElasticBungee(fixedPoint, 2.0f, 5.0f);
+					std::shared_ptr<particleElasticBungee> elasticBungee(new particleElasticBungee(fixedPoint, 2.0f, 5.0f));
 					particlepool.add(totesNew, elasticBungee);
 					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,5.0f);
 					//particlepool.add(fixedPoint, elasticBungeeb);

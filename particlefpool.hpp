@@ -6,19 +6,20 @@
 #include "particlefgen.hpp"
 
 #include <vector>
+#include <memory>
 
 struct ObjData;
 
 class particleForcePool {
 	private:
 		struct particleForcePooler {
-			particle *_particle;
-			particleForceGen *_fg;
+			std::shared_ptr<particle> _particle;
+			std::shared_ptr<particleForceGen> _fg;
 		};
 		
 		std::vector<particleForcePooler> pool;
 	public:
-		void add(particle* _particle, particleForceGen *_fg);
+		void add(std::shared_ptr<particle> _particle, std::shared_ptr<particleForceGen> _fg);
 		void remove(particle* _particle, particleForceGen *_fg);
 		void clear(particle* _particle, particleForceGen *_fg);
 		void update(float dT);

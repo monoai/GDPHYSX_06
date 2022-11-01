@@ -2,7 +2,7 @@
 
 #include "obj_mesh.h"
 
-void particleForcePool::add(particle *_particle, particleForceGen *_fg) {
+void particleForcePool::add(std::shared_ptr<particle>_particle, std::shared_ptr<particleForceGen>_fg) {
 	particleForcePooler newPool;
 	newPool._particle = _particle;
 	newPool._fg = _fg;
