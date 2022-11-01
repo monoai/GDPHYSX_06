@@ -48,6 +48,7 @@ void particle::update(float dT) {
  * can be done on a model are already handled by this function.
  */
 void particle::draw() {
+	glBindVertexArray(obj.vaoId);
 	// [DEBUG]
 	//std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::mat4(1.0f);

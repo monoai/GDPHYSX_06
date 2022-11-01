@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <memory>
+#include <ctime>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #define STB_IMAGE_IMPLEMENTATION
@@ -31,6 +32,7 @@ bool debugP = false;
 // Enum Declaration
 enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
 springType spring;
+
 
 particle::particleName particleType = particle::particleName::PISTOL;
 
@@ -81,6 +83,7 @@ int main() {
 	// Load Skybox Model
 	std::vector<std::string> faces{
 		"right.png",
+
 		"left.png",
 		"top.png",
 		"bottom.png",
@@ -138,9 +141,11 @@ int main() {
 	glClearColor(0.4f, 0.4f, 0.0f, 0.0f);//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
 
 	// var for Time
-	float currentTime = glfwGetTime();
-	float prevTime = 0.0f;
-	float dT = 1.0f / 60.0f;
+	double currentTime = glfwGetTime();
+	double accumulator = 0.0;
+
+	double t = 0.0f;
+	const double dT = 0.01f;
 
 
 	//Camera vec vars
@@ -148,6 +153,7 @@ int main() {
 	glm::vec3 eye = glm::vec3(-7.0f, 11.5f, 33.0f);
 	glm::vec3 center = glm::vec3(0.5f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
 	bool ortho = false;
 
 	particleForcePool particlepool;
@@ -229,38 +235,24 @@ int main() {
 
 		DrawSkybox(skybox, skyboxShaderProgram, view, projection);
 
-		//-----draw particle-----
-		glBindVertexArray(planet.vaoId);
 		glUseProgram(shaderProgram);
 		glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
 
 		// Update Loop
-		// Loops via deltaTime and the Semi-fixed timestep design
-		float newTime = glfwGetTime();
-		float frameTime = newTime - currentTime;
+		// Loops via the accumulator and a variable step design.
+		double newTime = glfwGetTime();
+		double frameTime = newTime - currentTime;
+		if(frameTime > 0.25) {
+			frameTime = 0.25;
+		}
 		currentTime = newTime;
-		while(frameTime >0.0f) {
-			float deltaTime = std::min(frameTime, dT);
-			frameTime -= deltaTime;
+
+		accumulator += frameTime;
 			
-			/*
-			if(particles.size() > 0) {
-				for(int i = 0; i < particles.size(); i++) {
-					if(particles[i].inUse == true) {
-						//particles[i].setPosition(xPos, yPos, zPos);
-						particles[i].update(deltaTime);
-						particles[i].draw(planet);
-						//std::cout << "Should be doing smth" << std::endl;
-					}
-				}
-			}
-			*/
-			
+		while(accumulator >= dT) {
 			if(particlepool.getSize() > 0) {
-				particlepool.updateForces(deltaTime);
-				particlepool.update(deltaTime);
-				particlepool.draw();
-				particlepool.checkLife();
+				particlepool.updateForces(dT);
+				particlepool.update(dT);
 			}
 			
 
@@ -282,6 +274,7 @@ int main() {
 				switch(spring)
 				{
 				case BASIC: {
+			
 					std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint,2.0f,3.0f));
 					particlepool.add(totesNew, springParticle);
 					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
@@ -319,7 +312,14 @@ int main() {
 				particlepool.getContents();
 				debugO = false;
 			}
+
+			t += dT;
+			accumulator -= dT;
 		}
+
+		particlepool.draw();
+		particlepool.checkLife();
+
 		//--- stop drawing here ---
 #pragma endregion
 
