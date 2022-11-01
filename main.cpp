@@ -24,6 +24,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 // Global variables
 bool spawnEnabled = false;
+bool debugI = false;
+bool debugO = false;
+bool debugP = false;
 
 // Enum Declaration
 enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
@@ -147,7 +150,6 @@ int main() {
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool ortho = false;
 
-	//std::vector<particle> particles;
 	particleForcePool particlepool;
 
 	glfwSetKeyCallback(window, key_callback);
@@ -258,6 +260,7 @@ int main() {
 				particlepool.updateForces(deltaTime);
 				particlepool.update(deltaTime);
 				particlepool.draw(planet);
+				particlepool.checkLife();
 			}
 			
 
@@ -270,11 +273,11 @@ int main() {
 				totesNew->setPosition(glm::vec3(6.5,0.5f,0.0f));
 				totesNew->inUse = true;
 
-				/*	
+				///*	
 				glm::vec3 acceleration = totesNew->getAcceleration();	
-				particleGravity* gpart = new particleGravity(acceleration);
+				std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
 				particlepool.add(totesNew, gpart);
-				*/
+				//*/
 				
 				switch(spring)
 				{
@@ -303,9 +306,18 @@ int main() {
 					break;
 				}
 
-				//particles.push_back(totesNew);
-				//std::cout << "Pushed back!" << std::endl;
 				spawnEnabled = false;
+			}
+
+			if(debugI==true) {
+				std::cout << "[DEBUG] - Pool size: " << particlepool.getSize() << std::endl;
+				debugI = false;
+			}
+
+			if(debugO==true) {
+				std::cout << "[DEBUG] - Pool contents: ";
+				particlepool.getContents();
+				debugO = false;
 			}
 		}
 		//--- stop drawing here ---
@@ -384,6 +396,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) {
 		std::cout << "SPRING REMOVED" << std::endl;
 		spring = NONE;
+	}
+
+	//DEBUG KEYS
+	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		debugI = true;
+	}
+	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+		debugO = true;
 	}
 }
 

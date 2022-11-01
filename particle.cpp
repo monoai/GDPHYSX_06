@@ -10,20 +10,8 @@
 
 particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc), inUse(false) {
 	this->trans = glm::mat4(1.0f);
-	std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
-	//std::cout << "init normal trans: " << glm::to_string(this->normalTrans) << std::endl;
-	//std::cout << "init model trans: " << glm::to_string(this->modelTrans) << std::endl;
+	//std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
 }
-
-//particle::particle(const particle &other) : trans(other.trans), normalTrans(other.normalTrans), modelTrans(other.modelTrans), inUse(other.inUse) {
-//}
-
-/*
-particle::~particle() {
-	std::cout << "Particle destroyed" << std::endl;
-}
-*/
-
 
 /* [UPDATE FUNCTION]
  * The function where all the calculations happens
@@ -31,7 +19,6 @@ particle::~particle() {
  * it only starts when the object is initiated. 
  */
 void particle::update(float dT) {
-	
 	// Updates the position
 	this->positionVector += this->velocityVector * dT;
 
@@ -48,19 +35,12 @@ void particle::update(float dT) {
 	// Clears accumulated force
 	clearForceAccum();
 
-
-	//[Debug]
-	//std::cout << this->yPos << " = " << this->yVelocity << " * " << this->damping << " + " << this->yAcceleration << std::endl;
-	//std::cout <<"xPosition " << this->xPos << std::endl;
-	//std::cout <<"yPosition " << this->yPos << std::endl;
-	//std::cout << "Time " << dT << std::endl;
 	life += dT;
-	//[Debug]
-	std::cout << "Life: " << life << std::endl;
+	//[DEBUG]
+	//std::cout << "Life: " << life << std::endl;
+	//std::cout << "Time " << dT << std::endl;
 	if(life >= 2.5f) {
 		inUse = false;
-		// use the pool to remove this particular particle
-		// delete this; works but it's very unsafe
 	}
 }
 
@@ -71,10 +51,10 @@ void particle::update(float dT) {
  */
 void particle::draw(ObjData obj) {
 	// [DEBUG]
-	std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
+	//std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::mat4(1.0f);
 	// [DEBUG]
-	std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
+	//std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
 	this->trans = glm::translate(this->trans, positionVector);
 	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
@@ -177,9 +157,6 @@ void particle::clearForceAccum() {
 void particle::setPosition(glm::vec3 vector) {
 
 	this->positionVector = vector;
-	// [DEBUG]
-	//std::cout << "xPos set: " << xPos << std::endl;
-	//std::cout << "yPos set: " << yPos << std::endl;
 }
 
 float particle::getInverseMass() {

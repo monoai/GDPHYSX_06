@@ -20,12 +20,14 @@ class particleForcePool {
 		std::vector<particleForcePooler> pool;
 	public:
 		void add(std::shared_ptr<particle> _particle, std::shared_ptr<particleForceGen> _fg);
-		void remove(particle* _particle, particleForceGen *_fg);
+		void remove(std::shared_ptr<particle> _particle, std::shared_ptr<particleForceGen> _fg);
 		void clear(particle* _particle, particleForceGen *_fg);
 		void update(float dT);
-		void draw(ObjData obj);
-		int getSize();
 		void updateForces(float dT);
+		void draw(ObjData obj);
+		void checkLife();
+		int getSize();
+		void getContents();
 };
 
 #endif
