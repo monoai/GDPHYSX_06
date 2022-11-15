@@ -145,7 +145,7 @@ int main() {
 	double accumulator = 0.0;
 
 	double t = 0.0f;
-	const double dT = 0.01f;
+	double dT = 0.01f;
 
 
 	//Camera vec vars

@@ -18,17 +18,17 @@ particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjDat
  */
 void particle::update(float dT) {
 	// Updates the position
-	this->positionVector += this->velocityVector * dT;
+	this->position += this->velocity * dT;
 
 	// Calculates the acceleration and the force.
-	glm::vec3 newAccel = this->accelerationVector;
-	newAccel += this->forceAccumVec * this->inverseMass; 
+	glm::vec3 newAccel = this->acceleration;
+	newAccel += this->forceAccum * this->inverseMass; 
 	
 	// Updates the velocity
-	this->velocityVector += newAccel * dT;
+	this->velocity += newAccel * dT;
 
 	// Adds drag
-	this->velocityVector *= pow(this->damping,dT);
+	this->velocity *= pow(this->damping,dT);
 
 	// Clears accumulated force
 	clearForceAccum();
@@ -54,7 +54,7 @@ void particle::draw() {
 	this->trans = glm::mat4(1.0f);
 	// [DEBUG]
 	//std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
-	this->trans = glm::translate(this->trans, positionVector);
+	this->trans = glm::translate(this->trans, position);
 	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
 	
@@ -86,24 +86,24 @@ void particle::setParticleParams(particleName name) {
 	switch (name)
 	{
 	case PISTOL:
-		this->velocityVector = glm::vec3(35.0f, 0.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, -1.0f, 0.0f);
+		this->velocity = glm::vec3(35.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, -1.0f, 0.0f);
 
 		this->setMass(2.0f);
 		this->damping = 0.99f;
 		std::cout << "Pistol set" << std::endl;
 		break;
 	case ARTILLERY:
-		this->velocityVector = glm::vec3(40.0f, 30.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, -20.0f, 0.0f);
+		this->velocity = glm::vec3(40.0f, 30.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
 
 		this->setMass(200.0f);
 		this->damping = 0.99f;
 		std::cout << "Artillery set" << std::endl;
 		break;
 	case FIREBALL:
-		this->velocityVector = glm::vec3(10.0f, 0.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, 0.6f, 0.0f);
+		this->velocity = glm::vec3(10.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, 0.6f, 0.0f);
 
 		this->setMass(1.0f);
 		this->damping = 0.99f;
@@ -111,24 +111,24 @@ void particle::setParticleParams(particleName name) {
 		break;
 	case LASER:
 
-		this->velocityVector = glm::vec3(100.0f, 0.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, 0.0f, 0.0f);
+		this->velocity = glm::vec3(100.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		this->setMass(0.1f);
 		this->damping = 0.99f;
 		std::cout << "Laser set" << std::endl;
 		break;
 	case FIREWORK:
-		this->velocityVector = glm::vec3(0.0f, 0.0f, 0.0f);
-		this->accelerationVector = glm::vec3(0.0f, 0.3f, 0.0f);
+		this->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, 0.3f, 0.0f);
 
 		std::cout << "Firework set" << std::endl;
 		break;
 	
 	default:
 
-		this->velocityVector = glm::vec3(0.0f);
-		this->accelerationVector = glm::vec3(0.0f);
+		this->velocity = glm::vec3(0.0f);
+		this->acceleration = glm::vec3(0.0f);
 
 		this->setMass(0.0f);
 		this->damping = 0.0f;
@@ -146,7 +146,7 @@ void particle::setParticleParams(particleName name) {
  * be used if an initial force is necessary.
  */
 void particle::addForce(glm::vec3 force) {
-	this->forceAccumVec += force;
+	this->forceAccum += force;
 }
 
 /* [clearForceAccum FUNCTION]
@@ -155,14 +155,14 @@ void particle::addForce(glm::vec3 force) {
  * for other iterations
  */
 void particle::clearForceAccum() {
-	this->forceAccumVec = glm::vec3(0.0f);
+	this->forceAccum = glm::vec3(0.0f);
 }
 
 /* [getPosition FUNCTION]
- * Returns the positionVector 
+ * Returns the position vector 
  */
 glm::vec3 particle::getPosition() {
-	return this->positionVector;
+	return this->position;
 }
 
 /* [setPosition FUNCTION]
@@ -174,7 +174,7 @@ glm::vec3 particle::getPosition() {
  */
 void particle::setPosition(glm::vec3 vector) {
 
-	this->positionVector = vector;
+	this->position = vector;
 }
 
 /* [getInverseMass FUNCTION]
@@ -200,16 +200,24 @@ float particle::getMass() {
 	return (1.0f)/this->inverseMass;
 }
 
+/*
+ * [setVelocity FUNCTION]
+ * Sets the velocity via a glm::vec3 parameter
+ */
+void particle::setVelocity(glm::vec3 newVel) {
+	this->velocity = newVel;	
+}
+
 /* [getVelocity FUNCTION]
- * Returns the velocityVector.
+ * Returns the velocity vector.
  */
 glm::vec3 particle::getVelocity() {
-	return this->velocityVector;
+	return this->velocity;
 }
 
 /* [getAcceleration FUNCTION]
- * Returns the accelerationVector. 
+ * Returns the acceleration vector. 
  */
 glm::vec3 particle::getAcceleration() {
-	return this->accelerationVector;
+	return this->acceleration;
 }

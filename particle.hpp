@@ -29,6 +29,7 @@ class particle {
 		float getInverseMass();
 		void setMass(float mass);
 		float getMass();
+		void setVelocity(glm::vec3 newVel);
 		glm::vec3 getVelocity();
 		glm::vec3 getAcceleration();
 	private:
@@ -38,15 +39,15 @@ class particle {
 		GLuint& modelTrans;
 
 		// Position variables
-		glm::vec3 positionVector = glm::vec3(0.0f);
+		glm::vec3 position = glm::vec3(0.0f);
 
 		// Life variables
 		float life = 0.0f;
 		
 		// Physics variables
-		glm::vec3 velocityVector = glm::vec3(0.0f);
-		glm::vec3 accelerationVector = glm::vec3(0.0f);
-		glm::vec3 forceAccumVec = glm::vec3(0.0f);
+		glm::vec3 velocity = glm::vec3(0.0f);
+		glm::vec3 acceleration = glm::vec3(0.0f);
+		glm::vec3 forceAccum = glm::vec3(0.0f);
 
 		// Particle properties
 		ObjData obj;

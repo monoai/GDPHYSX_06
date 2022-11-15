@@ -1,0 +1,37 @@
+#pragma once
+#ifndef PARTICLE_CONTACT_H
+#define PARTICLE_CONTACT_H
+
+#include "particle.hpp"
+#include <memory>
+
+#include <glm/glm.hpp>
+#include <glm/matrix.hpp>
+
+class particleContact {
+	friend class particleContactResolver;
+
+	public:
+		std::shared_ptr<particle> particle[2];
+
+		float restitution;
+		glm::vec3 contactNormal;
+		float penetration;
+	private:
+		glm::vec3 calculateSeparatingVel() const;
+		void resolve(float dT);
+		void resolveVel(float dT);
+		void resolveInterpenetration(float dT);
+};
+
+class particleContactResolver {
+	public:
+		particleContactResolver(unsigned iterations);
+		void setIterations(unsigned iterations);
+		void resolveContacts(particleContact *contactArray, unsigned numContacts, float dT);
+	private:
+		unsigned iterations;
+		unsigned iterationsUsed;
+};
+
+#endif
