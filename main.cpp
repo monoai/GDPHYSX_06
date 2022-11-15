@@ -252,7 +252,7 @@ int main() {
 		while(accumulator >= dT) {
 			if(particlepool.getSize() > 0) {
 				particlepool.updateForces(dT);
-				//particlepool.update(dT);
+				particlepool.update(dT);
 			}
 			
 
