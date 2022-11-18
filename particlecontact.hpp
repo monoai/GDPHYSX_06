@@ -12,7 +12,7 @@ class particleContact {
 	friend class particleContactResolver;
 
 	public:
-		std::shared_ptr<particle> particle[2];
+		std::shared_ptr<particle> _particle[2];
 
 		float restitution;
 		glm::vec3 contactNormal;
@@ -32,6 +32,11 @@ class particleContactResolver {
 	private:
 		unsigned iterations;
 		unsigned iterationsUsed;
+};
+
+class particleContactGen {
+	public:
+		virtual unsigned addContact(particleContact* contact, unsigned limit) const = 0;
 };
 
 #endif

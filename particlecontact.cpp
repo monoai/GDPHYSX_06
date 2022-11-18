@@ -6,8 +6,8 @@ void particleContact::resolve(float dT) {
 }
 
 glm::vec3 particleContact::calculateSeparatingVel() const {
-	glm::vec3 relativeVel = particle[0]->getVelocity();
-	if(particle[1]) relativeVel -= particle[1]->getVelocity();
+	glm::vec3 relativeVel = _particle[0]->getVelocity();
+	if(_particle[1]) relativeVel -= _particle[1]->getVelocity();
 	return relativeVel * contactNormal;
 }
 
@@ -23,9 +23,9 @@ void particleContact::resolveVel(float dT) {
 
 	glm::vec3 newSepVel = -separatingVel * restitution;
 
-	glm::vec3 accCausedVel = particle[0]->getAcceleration();
-	if(particle[1]) {
-		accCausedVel -= particle[1]->getAcceleration();
+	glm::vec3 accCausedVel = _particle[0]->getAcceleration();
+	if(_particle[1]) {
+		accCausedVel -= _particle[1]->getAcceleration();
 	}
 	glm::vec3 accCausedSepVel = accCausedVel * contactNormal * dT;
 
@@ -41,9 +41,9 @@ void particleContact::resolveVel(float dT) {
 
 	glm::vec3 deltaVel = newSepVel - separatingVel;
 
-	float totalInverseMass = particle[0]->getInverseMass();
-	if(particle[1]) {
-		totalInverseMass += particle[1]->getInverseMass();
+	float totalInverseMass = _particle[0]->getInverseMass();
+	if(_particle[1]) {
+		totalInverseMass += _particle[1]->getInverseMass();
 	}
 
 	if(totalInverseMass <= 0) {
@@ -54,9 +54,9 @@ void particleContact::resolveVel(float dT) {
 
 	glm::vec3 impulsePerIMass = contactNormal * impulse;
 
-	particle[0]->setVelocity(particle[0]->getVelocity() + impulsePerIMass * particle[0]->getInverseMass());
-	if(particle[1]) {
-		particle[1]->setVelocity(particle[1]->getVelocity() + impulsePerIMass * -particle[1]->getInverseMass());
+	_particle[0]->setVelocity(_particle[0]->getVelocity() + impulsePerIMass * _particle[0]->getInverseMass());
+	if(_particle[1]) {
+		_particle[1]->setVelocity(_particle[1]->getVelocity() + impulsePerIMass * -_particle[1]->getInverseMass());
 	}
 }
 
@@ -65,9 +65,9 @@ void particleContact::resolveInterpenetration(float dT) {
 		return;
 	}
 
-	float totalInverseMass = particle[0]->getInverseMass();
-	if(particle[1]) {
-		totalInverseMass += particle[1]->getInverseMass();
+	float totalInverseMass = _particle[0]->getInverseMass();
+	if(_particle[1]) {
+		totalInverseMass += _particle[1]->getInverseMass();
 	}
 
 	if(totalInverseMass <= 0) {
@@ -76,11 +76,19 @@ void particleContact::resolveInterpenetration(float dT) {
 
 	glm::vec3 movePerIMass = contactNormal * (-penetration / totalInverseMass);
 
-	particle[0]->setPosition(particle[0]->getPosition() + movePerIMass * particle[0]->getInverseMass());
+	_particle[0]->setPosition(_particle[0]->getPosition() + movePerIMass * _particle[0]->getInverseMass());
 
-	if(particle[1]) {
-		particle[1]->setPosition(particle[1]->getPosition() + movePerIMass * particle[1]->getInverseMass());
+	if(_particle[1]) {
+		_particle[1]->setPosition(_particle[1]->getPosition() + movePerIMass * _particle[1]->getInverseMass());
 	}
+}
+
+particleContactResolver::particleContactResolver(unsigned iterations) : iterations(iterations) {
+
+}
+
+void particleContactResolver::setIterations(unsigned iterations) {
+	particleContactResolver::iterations = iterations;
 }
 
 void particleContactResolver::resolveContacts(particleContact *contactArray, unsigned int numContacts, float dT) {

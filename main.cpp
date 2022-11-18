@@ -19,6 +19,7 @@
 #include "particle.hpp"
 #include "particlefgen.hpp"
 #include "particlefpool.hpp"
+#include "particleworld.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -156,7 +157,9 @@ int main() {
 
 	bool ortho = false;
 
+	// World variables
 	particleForcePool particlepool;
+	particleWorld world(1*10);
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -250,10 +253,16 @@ int main() {
 		accumulator += frameTime;
 			
 		while(accumulator >= dT) {
+			world.startFrame();
+			
+			world.runPhysics(dT);
+			
+			/*
 			if(particlepool.getSize() > 0) {
 				particlepool.updateForces(dT);
 				particlepool.update(dT);
 			}
+			*/
 			
 
 			if(spawnEnabled==true) {
@@ -268,7 +277,8 @@ int main() {
 				///*	
 				glm::vec3 acceleration = totesNew->getAcceleration();	
 				std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
-				particlepool.add(totesNew, gpart);
+				//particlepool.add(totesNew, gpart);
+				world.getForcePool().add(totesNew, gpart);
 				//*/
 				
 				switch(spring)
@@ -317,8 +327,8 @@ int main() {
 			accumulator -= dT;
 		}
 
-		particlepool.draw();
-		particlepool.checkLife();
+		world.getForcePool().draw();
+		world.getForcePool().checkLife();
 
 		//--- stop drawing here ---
 #pragma endregion
