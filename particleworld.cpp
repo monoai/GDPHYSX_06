@@ -2,45 +2,28 @@
 
 #include "particlecontact.hpp"
 
-particleWorld::particleWorld(unsigned maxContacts, unsigned iterations) : resolver(iterations), maxContacts(maxContacts) {
-	contacts = new particleContact[maxContacts];
-	calculateIterations = (iterations == 0);
-}
-
 void particleWorld::startFrame() {
-	std::shared_ptr<particlePooler> currParticle = firstParticle;
-	while(currParticle) {
-		currParticle->_particle->clearForceAccum();
-		currParticle = currParticle->next;
+	for(long unsigned int i = 0; i < particlePool.size(); i++) {
+		particlePool[i]->clearForceAccum();
 	}
 }
 
-unsigned particleWorld::generateContacts() {
-	unsigned limit = maxContacts;
-	particleContact* nextContact = contacts;
+void particleWorld::generateContacts() {
+	unsigned limit = contactPool.size();
 
-	std::shared_ptr<contactGenPooler> currContact = firstContactGen;
-	while(currContact) {
-		unsigned used = currContact->gen->addContact(nextContact, limit);
+	for(long unsigned int i = 0; i < contactGenPool.size(); i++) {
+		contactGenPool[i]->addContact(contactPool[i], limit);
 		limit -= 1;
-		nextContact += used;
 
-		if (limit <=0) {
+		if(limit <=0) {
 			break;
 		}
-
-		currContact = currContact->next;
 	}
-
-	return maxContacts - limit;
 }
 
 void particleWorld::update(float dT) {
-	std::shared_ptr<particlePooler> currParticle = firstParticle;
-	while(currParticle) {
-		currParticle->_particle->update(dT);
-
-		currParticle = currParticle->next;
+	for(long unsigned int i = 0; i < particlePool.size(); i++) {
+		particlePool[i]->update(dT);
 	}
 }
 
@@ -48,15 +31,29 @@ void particleWorld::runPhysics(float dT) {
 	forcePool.updateForces(dT);
 
 	this->update(dT);
+	
+	generateContacts();
 
-	unsigned usedContacts = generateContacts();
+	if(contactPool.size()) {
+		resolver.setIterations(contactPool.size() * 2);
+		resolver.resolveContacts(contactPool, contactPool.size(), dT);
+	}
+}
 
-	if(calculateIterations) {
-		resolver.setIterations(usedContacts * 2);
-		resolver.resolveContacts(contacts, usedContacts, dT);
+void particleWorld::draw(float dT) {
+	for(long unsigned int i = 0; i < particlePool.size(); i++) {
+		particlePool[i]->draw();
 	}
 }
 
 particleForcePool& particleWorld::getForcePool(){
 	return forcePool;
+}
+
+std::vector<std::shared_ptr<particle>>& particleWorld::getParticlePool(){
+	return particlePool;
+}
+
+std::vector<std::shared_ptr<particleContactGen>>& particleWorld::getContactGenPool(){
+	return contactGenPool;
 }

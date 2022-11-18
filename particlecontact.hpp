@@ -28,7 +28,7 @@ class particleContactResolver {
 	public:
 		particleContactResolver(unsigned iterations);
 		void setIterations(unsigned iterations);
-		void resolveContacts(particleContact *contactArray, unsigned numContacts, float dT);
+		void resolveContacts(std::vector<std::shared_ptr<particleContact>> contactArray, unsigned numContacts, float dT);
 	private:
 		unsigned iterations;
 		unsigned iterationsUsed;
@@ -36,7 +36,7 @@ class particleContactResolver {
 
 class particleContactGen {
 	public:
-		virtual unsigned addContact(particleContact* contact, unsigned limit) const = 0;
+		virtual unsigned addContact(std::shared_ptr<particleContact> contact, unsigned limit) const = 0;
 };
 
 #endif

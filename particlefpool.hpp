@@ -22,9 +22,9 @@ class particleForcePool {
 		void add(std::shared_ptr<particle> _particle, std::shared_ptr<particleForceGen> _fg);
 		void remove(std::shared_ptr<particle> _particle, std::shared_ptr<particleForceGen> _fg);
 		void clear(particle* _particle, particleForceGen *_fg);
-		void update(float dT);
+		//void update(float dT);
 		void updateForces(float dT);
-		void draw();
+		//void draw();
 		void checkLife();
 		int getSize();
 		void getContents();

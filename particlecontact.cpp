@@ -91,20 +91,20 @@ void particleContactResolver::setIterations(unsigned iterations) {
 	particleContactResolver::iterations = iterations;
 }
 
-void particleContactResolver::resolveContacts(particleContact *contactArray, unsigned int numContacts, float dT) {
+void particleContactResolver::resolveContacts(std::vector<std::shared_ptr<particleContact>> contactArray, unsigned int numContacts, float dT) {
 	iterationsUsed = 0;
 	while(iterationsUsed < iterations) {
 		glm::vec3 max = glm::vec3(0.0f);
 		unsigned maxIndex = numContacts;
 		for(unsigned i = 0; i < numContacts; i++) {
-			glm::vec3 sepVel = contactArray[i].calculateSeparatingVel();
+			glm::vec3 sepVel = contactArray[i]->calculateSeparatingVel();
 			if(glm::all(glm::lessThan(sepVel, max))){
 				max = sepVel;
 				maxIndex = i;
 			}
 		}
 
-		contactArray[maxIndex].resolve(dT);
+		contactArray[maxIndex]->resolve(dT);
 		iterationsUsed++;
 	}
 }

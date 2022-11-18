@@ -158,8 +158,8 @@ int main() {
 	bool ortho = false;
 
 	// World variables
-	particleForcePool particlepool;
-	particleWorld world(1*10);
+	// particleForcePool particlepool;
+	particleWorld world;
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -253,7 +253,7 @@ int main() {
 		accumulator += frameTime;
 			
 		while(accumulator >= dT) {
-			world.startFrame();
+			world.startFrame(); // Redundant due to particles already clearing forceAccum after calculation, but this is a sure (segurista) way.
 			
 			world.runPhysics(dT);
 			
@@ -286,7 +286,7 @@ int main() {
 				case BASIC: {
 			
 					std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint,2.0f,3.0f));
-					particlepool.add(totesNew, springParticle);
+					world.getForcePool().add(totesNew, springParticle);
 					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
 					//particlepool.add(fixedPoint, springParticle);
 					}
@@ -294,12 +294,12 @@ int main() {
 				case ANCHOR: {
 					glm::vec3 fixedPos = fixedPoint->getPosition();
 					std::shared_ptr<particleAnchoredSpring> anchoredSpring(new particleAnchoredSpring(fixedPos, 2.0f, 3.0f));
-					particlepool.add(totesNew, anchoredSpring);
+					world.getForcePool().add(totesNew, anchoredSpring);
 					}
 					break;
 				case ELASTIC: {
 					std::shared_ptr<particleElasticBungee> elasticBungee(new particleElasticBungee(fixedPoint, 2.0f, 5.0f));
-					particlepool.add(totesNew, elasticBungee);
+					world.getForcePool().add(totesNew, elasticBungee);
 					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,5.0f);
 					//particlepool.add(fixedPoint, elasticBungeeb);
 					}
@@ -309,17 +309,20 @@ int main() {
 					break;
 				}
 
+				// Function here to add final particle to the particle list.
+				world.getParticlePool().push_back(totesNew);
+
 				spawnEnabled = false;
 			}
 
 			if(debugI==true) {
-				std::cout << "[DEBUG] - Pool size: " << particlepool.getSize() << std::endl;
+				std::cout << "[DEBUG] - Pool size: " << world.getForcePool().getSize() << std::endl;
 				debugI = false;
 			}
 
 			if(debugO==true) {
 				std::cout << "[DEBUG] - Pool contents: ";
-				particlepool.getContents();
+				world.getForcePool().getContents();
 				debugO = false;
 			}
 
@@ -327,7 +330,9 @@ int main() {
 			accumulator -= dT;
 		}
 
-		world.getForcePool().draw();
+		// world.getForcePool().draw();
+		// A function here to draw a list of overall particles.
+		world.draw(dT);
 		world.getForcePool().checkLife();
 
 		//--- stop drawing here ---
