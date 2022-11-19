@@ -11,6 +11,8 @@
 class particle {
 	public:
 		bool inUse;
+		float radius = 1.0f;
+		float restitution = 1.0f;
 		enum particleName {
 			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
 		};
