@@ -1,6 +1,7 @@
 #include "particleworld.hpp"
 
 #include "particlecontact.hpp"
+#include <glm/gtx/norm.hpp>
 
 void particleWorld::startFrame() {
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
@@ -10,12 +11,14 @@ void particleWorld::startFrame() {
 
 void particleWorld::addContact(std::shared_ptr<particle> a, std::shared_ptr<particle> b, float restitution, glm::vec3 normal) {
 	
-	std::shared_ptr<particleContact> contact;
-
+	std::shared_ptr<particleContact> contact(new particleContact());
+	//std::cout << "[DEBUG] - NameAadd: " << a << std::endl;
+	//std::cout << "[DEBUG] - NameBadd: " << b << std::endl;
 	contact->_particle[0] = a;
 	contact->_particle[1] = b;
 	contact->restitution = restitution;
 	contact->contactNormal = normal;
+	//contact->penetration = a->radius - normal;
 
 	contactPool.push_back(contact);
 	
@@ -23,9 +26,9 @@ void particleWorld::addContact(std::shared_ptr<particle> a, std::shared_ptr<part
 }
 
 void particleWorld::generateContacts() {
-	unsigned limit = contactPool.size();
 	contactPool.clear();
 	getOverlaps();
+	unsigned limit = contactPool.size();
 
 	for(long unsigned int i = 0; i < contactGenPool.size(); i++) {
 		contactGenPool[i]->addContact(contactPool[i], limit);
@@ -46,7 +49,7 @@ void particleWorld::getOverlaps() {
 }
 
 void particleWorld::generateParticleContacts(std::shared_ptr<particle> a, std::shared_ptr<particle> b) {
-	float mag = glm::length(a->getPosition() - b->getPosition());
+	float mag = glm::length2(a->getPosition() - b->getPosition());
 	float rad = (a->radius + b->radius) * (a->radius + b->radius);
 
 	if (mag <= rad) {
@@ -57,6 +60,8 @@ void particleWorld::generateParticleContacts(std::shared_ptr<particle> a, std::s
 		if (b->restitution < restitution) {
 			restitution = b->restitution;
 		}
+		//std::cout << "[DEBUG] - NameApreadd: " << a << std::endl;
+		//std::cout << "[DEBUG] - NameBpreadd: " << b << std::endl;
 		addContact(a,b, restitution,glm::normalize(a->getPosition() - b->getPosition()));
 	}
 }
@@ -72,12 +77,11 @@ void particleWorld::runPhysics(float dT) {
 
 	this->update(dT);
 	
-	
 	generateContacts();
 
-	if(contactPool.size()) {
+	if(contactPool.size() > 0) {
 		resolver.setIterations(contactPool.size() * 2);
-		resolver.resolveContacts(contactPool, contactPool.size(), dT);
+		resolver.resolveContacts(contactPool, dT);
 	}
 	
 }

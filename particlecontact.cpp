@@ -1,27 +1,29 @@
 #include "particlecontact.hpp"
 
+#include <glm/gtx/string_cast.hpp>
+
 void particleContact::resolve(float dT) {
 	resolveVel(dT);
 	resolveInterpenetration(dT);
 }
 
-glm::vec3 particleContact::calculateSeparatingVel() const {
+float particleContact::calculateSeparatingVel() const {
 	glm::vec3 relativeVel = _particle[0]->getVelocity();
 	if(_particle[1]) relativeVel -= _particle[1]->getVelocity();
-	return relativeVel * contactNormal;
+	return glm::dot(relativeVel, contactNormal);
 }
 
 void particleContact::resolveVel(float dT) {
-	glm::vec3 separatingVel = calculateSeparatingVel();
+	float separatingVel = calculateSeparatingVel();
 
 	// Maybe try this instead?
 	// if(glm::length2(separatingVel) > 0.0f)
-	if(glm::all(glm::greaterThan(separatingVel, glm::vec3(0.0f)))) {
+	if(separatingVel > 0.0f) {
 		std::cout << "[DEBUG]: SeparatingVel not > 0" << std::endl;
 		return;
 	}
 
-	glm::vec3 newSepVel = -separatingVel * restitution;
+	float newSepVel = -separatingVel * restitution;
 
 	glm::vec3 accCausedVel = _particle[0]->getAcceleration();
 	if(_particle[1]) {
@@ -29,17 +31,19 @@ void particleContact::resolveVel(float dT) {
 	}
 	glm::vec3 accCausedSepVel = accCausedVel * contactNormal * dT;
 
+	std::cout << "[DEBUG] - AccCausedSepVel: " << glm::to_string(accCausedSepVel) << std::endl;
+
 	if(glm::all(glm::lessThan(accCausedSepVel, glm::vec3(0.0f)))) {
 		std::cout << "[DEBUG]: accCausedSepVel not < 0" << std::endl;
-		newSepVel += restitution * accCausedSepVel;
+		newSepVel += restitution * glm::length(accCausedSepVel);
 
-		if(glm::all(glm::lessThan(newSepVel, glm::vec3(0.0f)))) {
+		if(newSepVel < 0.0f) {
 			std::cout << "[DEBUG]: newSepVel not < 0" << std::endl;
-			newSepVel = glm::vec3(0.0f);
+			newSepVel = 0.0f;
 		}
 	}
 
-	glm::vec3 deltaVel = newSepVel - separatingVel;
+	float deltaVel = newSepVel - separatingVel;
 
 	float totalInverseMass = _particle[0]->getInverseMass();
 	if(_particle[1]) {
@@ -50,7 +54,7 @@ void particleContact::resolveVel(float dT) {
 		return;
 	}
 
-	glm::vec3 impulse = deltaVel / totalInverseMass;
+	float impulse = deltaVel / totalInverseMass;
 
 	glm::vec3 impulsePerIMass = contactNormal * impulse;
 
@@ -91,20 +95,28 @@ void particleContactResolver::setIterations(unsigned iterations) {
 	particleContactResolver::iterations = iterations;
 }
 
-void particleContactResolver::resolveContacts(std::vector<std::shared_ptr<particleContact>> contactArray, unsigned int numContacts, float dT) {
+void particleContactResolver::resolveContacts(std::vector<std::shared_ptr<particleContact>> contactPool, float dT) {
 	iterationsUsed = 0;
 	while(iterationsUsed < iterations) {
-		glm::vec3 max = glm::vec3(0.0f);
-		unsigned maxIndex = numContacts;
-		for(unsigned i = 0; i < numContacts; i++) {
-			glm::vec3 sepVel = contactArray[i]->calculateSeparatingVel();
-			if(glm::all(glm::lessThan(sepVel, max))){
+		float max = 99999999999.9f;
+		unsigned maxIndex = 0;
+		for(unsigned i = 0; i < contactPool.size(); i++) {
+			float sepVel = contactPool[i]->calculateSeparatingVel();
+			if(sepVel < max){
 				max = sepVel;
 				maxIndex = i;
+				std::cout << "[DEBUG] - Something got calculated" << std::endl;
 			}
 		}
 
-		contactArray[maxIndex]->resolve(dT);
+		if(maxIndex == contactPool.size()) {
+			std::cout << "[DEBUG] - algoDone" << std::endl;
+			break;
+		}
+
+		//std::cout << "[DEBUG] - IterationsUsed: " << iterationsUsed << std::endl;
+		contactPool[maxIndex]->resolve(dT);
+
 		iterationsUsed++;
 	}
 }

@@ -19,7 +19,7 @@ class particleContact {
 		float penetration;
 		void resolve(float dT); //Temporarily on public while code is still being sorted
 	private:
-		glm::vec3 calculateSeparatingVel() const;
+		float calculateSeparatingVel() const;
 		//void resolve(float dT);
 		void resolveVel(float dT);
 		void resolveInterpenetration(float dT);
@@ -29,7 +29,7 @@ class particleContactResolver {
 	public:
 		particleContactResolver(unsigned iterations);
 		void setIterations(unsigned iterations);
-		void resolveContacts(std::vector<std::shared_ptr<particleContact>> contactArray, unsigned numContacts, float dT);
+		void resolveContacts(std::vector<std::shared_ptr<particleContact>> contactArray, float dT);
 	private:
 		unsigned iterations;
 		unsigned iterationsUsed;

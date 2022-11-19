@@ -48,7 +48,6 @@ int main() {
 	// Load Skybox Model
 	std::vector<std::string> faces{
 		"right.png",
-
 		"left.png",
 		"top.png",
 		"bottom.png",
@@ -203,17 +202,6 @@ int main() {
 			
 			world.runPhysics(dT);			
 
-			if(debugI==true) {
-				std::cout << "[DEBUG] - Pool size: " << world.getForcePool().getSize() << std::endl;
-				debugI = false;
-			}
-
-			if(debugO==true) {
-				std::cout << "[DEBUG] - Pool contents: ";
-				world.getForcePool().getContents();
-				debugO = false;
-			}
-
 			t += dT;
 			accumulator -= dT;
 		}
@@ -225,7 +213,7 @@ int main() {
 
 		// A function here to draw a list of overall particles.
 		world.draw(dT);
-		world.getForcePool().checkLife();
+		//world.getForcePool().checkLife();
 
 		//--- stop drawing here ---
 #pragma endregion
@@ -307,10 +295,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	//DEBUG KEYS
 	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		debugI = true;
+		std::cout << "[DEBUG] - Pool size: " << world.getForcePool().getSize() << std::endl;
 	}
 	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-		debugO = true;
+		std::cout << "[DEBUG] - Pool contents: ";
+		world.getForcePool().getContents();
 	}
 }
 

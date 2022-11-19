@@ -15,7 +15,7 @@ class particleWorld {
 		std::vector<std::shared_ptr<particle>> particlePool;
 		particleForcePool forcePool;
 		std::vector<std::shared_ptr<particleContactGen>> contactGenPool;
-		particleContactResolver resolver = particleContactResolver(0);
+		particleContactResolver resolver = particleContactResolver(20);
 		std::vector<std::shared_ptr<particleContact>> contactPool;
 	public:
 		void startFrame();
