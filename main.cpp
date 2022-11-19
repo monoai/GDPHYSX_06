@@ -20,6 +20,7 @@
 #include "particlefgen.hpp"
 #include "particlefpool.hpp"
 #include "particleworld.hpp"
+#include "particlecontact.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -175,6 +176,23 @@ int main() {
 
 #pragma endregion
 
+#pragma region Prerender Spawnings
+	// This region's purpose is mostly/usually debugging
+	// Could also be used to declare objects that should only spawn once
+	
+	// Contact test
+	/*
+	std::shared_ptr<particle> testParticle(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	testParticle->setPosition(glm::vec3(10.0,0.5f,0.0f));
+	testParticle->setMass(1.5f);
+
+	world.getParticlePool().push_back(testParticle);
+
+	particleContact contact = particleContact();
+	contact._particle[0] = testParticle;
+	contact._particle[1] = NULL;
+	*/
+
 	while (!glfwWindowShouldClose(window)) {
 
 #pragma region Viewport
@@ -309,6 +327,15 @@ int main() {
 					break;
 				}
 
+				// Testing contacts
+				/*
+				contact._particle[0] = testParticle;
+				contact._particle[1] = totesNew;
+				contact.contactNormal = testParticle->getPosition() - totesNew->getPosition();
+				contact.contactNormal = glm::normalize(contact.contactNormal);
+				contact.restitution = 1;
+				*/
+
 				// Function here to add final particle to the particle list.
 				world.getParticlePool().push_back(totesNew);
 
@@ -329,8 +356,12 @@ int main() {
 			t += dT;
 			accumulator -= dT;
 		}
+		/*
+		if(contact._particle[0] != NULL || contact._particle[1] != NULL) {
+			contact.resolve(dT);
+		}
+		*/
 
-		// world.getForcePool().draw();
 		// A function here to draw a list of overall particles.
 		world.draw(dT);
 		world.getForcePool().checkLife();

@@ -32,12 +32,14 @@ void particleWorld::runPhysics(float dT) {
 
 	this->update(dT);
 	
+	/*
 	generateContacts();
 
 	if(contactPool.size()) {
 		resolver.setIterations(contactPool.size() * 2);
 		resolver.resolveContacts(contactPool, contactPool.size(), dT);
 	}
+	*/
 }
 
 void particleWorld::draw(float dT) {

@@ -17,9 +17,10 @@ class particleContact {
 		float restitution;
 		glm::vec3 contactNormal;
 		float penetration;
+		void resolve(float dT); //Temporarily on public while code is still being sorted
 	private:
 		glm::vec3 calculateSeparatingVel() const;
-		void resolve(float dT);
+		//void resolve(float dT);
 		void resolveVel(float dT);
 		void resolveInterpenetration(float dT);
 };
