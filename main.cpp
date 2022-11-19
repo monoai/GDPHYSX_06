@@ -1,45 +1,9 @@
-#include <stdio.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <stdlib.h>
-#include <algorithm>
-#include <memory>
-#include <ctime>
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "glm/glm.hpp"
-#include "obj_mesh.h"
-#include "shader.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "skybox.h"
-#include "glm/gtx/string_cast.hpp"
-#include "particle.hpp"
-#include "particlefgen.hpp"
-#include "particlefpool.hpp"
-#include "particleworld.hpp"
-#include "particlecontact.hpp"
+#include "main.hpp"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-// Global variables
-bool spawnEnabled = false;
-bool debugI = false;
-bool debugO = false;
-bool debugP = false;
-
-// Enum Declaration
-enum springType{ NONE, BASIC, ANCHOR, ELASTIC};
-springType spring;
-
-
-particle::particleName particleType = particle::particleName::PISTOL;
-
 int main() {
-	//stbi_set_flip_vertically_on_load(true);
 #pragma region Initialization
 	//initialize glfw
 	if (glfwInit() != GLFW_TRUE) {
@@ -71,9 +35,8 @@ int main() {
 
 
 #pragma region Mesh Loading
-	obj_mesh mesh; // Initialize class
 
-	ObjData planet;
+	//Load Planet Model
 	mesh.LoadObjFile(&planet, "planets/Earth.obj");
 	GLfloat earthOffsets[] = { 0.0f, 0.0f, 0.0f };
 	mesh.LoadObjToMemory(
@@ -92,35 +55,31 @@ int main() {
 		"front.png",
 		"back.png"
 	};
-	SkyboxData skybox = LoadSkybox("Assets/skybox", faces);
+	skybox = LoadSkybox("Assets/skybox", faces);
 #pragma endregion
 
 #pragma region Shader Loading
 
 	//Skybox Shaders
-	GLuint skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
+	skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
 	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Normal Shaders
-	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_normal_fragment.shader");
+	shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_normal_fragment.shader");
 	glUseProgram(shaderProgram);
 
-	GLuint simpleShader = LoadShaders("Shaders/vertex.shader", "Shaders/fragment.shader");
-
-	GLuint colorLoc = glGetUniformLocation(shaderProgram, "u_color");
+	colorLoc = glGetUniformLocation(shaderProgram, "u_color");
 	glUniform3f(colorLoc, 1.0f, 1.0f, 1.0f);
 
-
 	// initialize MVP
-	GLuint modelTransformLoc = glGetUniformLocation(shaderProgram, "u_model");
-	GLuint viewLoc = glGetUniformLocation(shaderProgram, "u_view");
-	GLuint projectionLoc = glGetUniformLocation(shaderProgram, "u_projection");
+	modelTransformLoc = glGetUniformLocation(shaderProgram, "u_model");
+	viewLoc = glGetUniformLocation(shaderProgram, "u_view");
+	projectionLoc = glGetUniformLocation(shaderProgram, "u_projection");
 
 	// initialize normal transformation
-	GLuint normalTransformLoc = glGetUniformLocation(shaderProgram, "u_normal");
-	GLuint cameraPosLoc = glGetUniformLocation(shaderProgram, "u_camera_pos");
-	GLuint ambientColorLoc = glGetUniformLocation(shaderProgram, "u_ambient_color");
-	//glUniform3f(ambientColorLoc, 1.0f, 1.0f, 1.0f);
+	normalTransformLoc = glGetUniformLocation(shaderProgram, "u_normal");
+	cameraPosLoc = glGetUniformLocation(shaderProgram, "u_camera_pos");
+	ambientColorLoc = glGetUniformLocation(shaderProgram, "u_ambient_color");
 
 	glm::mat4 trans = glm::mat4(1.0f); // identity
 	glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -130,37 +89,13 @@ int main() {
 
 	// define projection matrix
 	glm::mat4 projection = glm::mat4(1.0f);
-	//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	//setup shading
-	GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "u_light_pos");
+	//GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "u_light_pos");
 
 #pragma endregion
 
 #pragma region Prerender Preparations
-
-	// set bg color to green
-	glClearColor(0.4f, 0.4f, 0.0f, 0.0f);//float gravity = 9.8f*0.05f; //Dampening gravity because too strong
-
-	// var for Time
-	double currentTime = glfwGetTime();
-	double accumulator = 0.0;
-
-	double t = 0.0f;
-	double dT = 0.01f;
-
-
-	//Camera vec vars
-	//Perspective Vecs
-	glm::vec3 eye = glm::vec3(-7.0f, 11.5f, 33.0f);
-	glm::vec3 center = glm::vec3(0.5f, 0.0f, -1.0f);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	bool ortho = false;
-
-	// World variables
-	// particleForcePool particlepool;
-	particleWorld world;
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -215,17 +150,9 @@ int main() {
 		// Orthographic with corection for stretching, resize window to see difference with previous example
 		//projection = glm::ortho(-ratio, ratio, -1.0f, 1.0f, 0.1f, 10.0f);
 
-		/*
-		*/
 		float zoomFactor = 20.0f;
 
-		// Perspective Projection
-		if (ortho == false) {
-			projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 500.0f);
-		}
-		else {
-			projection = glm::ortho(-ratio - zoomFactor, ratio + zoomFactor, -1.0f - zoomFactor, 1.0f + zoomFactor, -20.1f, 120.0f);
-		}
+		projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 500.0f);
 
 		// Set projection matrix in shader
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -240,6 +167,7 @@ int main() {
 		glUniform3f(cameraPosLoc, eye.x, eye.y, eye.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
+		///Camera Position Debug
 		//std::cout << "Eye\t" << glm::to_string(eye) << std::endl;
 		//std::cout << "Center\t" << glm::to_string(center) << std::endl;
 		//std::cout << "Up\t" << glm::to_string(up) << std::endl;
@@ -273,74 +201,7 @@ int main() {
 		while(accumulator >= dT) {
 			world.startFrame(); // Redundant due to particles already clearing forceAccum after calculation, but this is a sure (segurista) way.
 			
-			world.runPhysics(dT);
-			
-			/*
-			if(particlepool.getSize() > 0) {
-				particlepool.updateForces(dT);
-				particlepool.update(dT);
-			}
-			*/
-			
-
-			if(spawnEnabled==true) {
-				std::shared_ptr<particle> fixedPoint(new particle(&normalTransformLoc, &modelTransformLoc, planet));
-				fixedPoint->setPosition(glm::vec3(1.0f,1.0f,0.0f));
-
-				std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
-				totesNew->setParticleParams(particleType);
-				totesNew->setPosition(glm::vec3(6.5,0.5f,0.0f));
-				totesNew->inUse = true;
-
-				///*	
-				glm::vec3 acceleration = totesNew->getAcceleration();	
-				std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
-				//particlepool.add(totesNew, gpart);
-				world.getForcePool().add(totesNew, gpart);
-				//*/
-				
-				switch(spring)
-				{
-				case BASIC: {
-			
-					std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint,2.0f,3.0f));
-					world.getForcePool().add(totesNew, springParticle);
-					//particleSpring* springParticleb = new particleSpring(totesNew, 1.0f,2.0f);
-					//particlepool.add(fixedPoint, springParticle);
-					}
-					break;
-				case ANCHOR: {
-					glm::vec3 fixedPos = fixedPoint->getPosition();
-					std::shared_ptr<particleAnchoredSpring> anchoredSpring(new particleAnchoredSpring(fixedPos, 2.0f, 3.0f));
-					world.getForcePool().add(totesNew, anchoredSpring);
-					}
-					break;
-				case ELASTIC: {
-					std::shared_ptr<particleElasticBungee> elasticBungee(new particleElasticBungee(fixedPoint, 2.0f, 5.0f));
-					world.getForcePool().add(totesNew, elasticBungee);
-					//particleElasticBungee* elasticBungeeb = new particleElasticBungee(totesNew, 2.0f,5.0f);
-					//particlepool.add(fixedPoint, elasticBungeeb);
-					}
-				case NONE: {
-					// Do nothing
-					}
-					break;
-				}
-
-				// Testing contacts
-				/*
-				contact._particle[0] = testParticle;
-				contact._particle[1] = totesNew;
-				contact.contactNormal = testParticle->getPosition() - totesNew->getPosition();
-				contact.contactNormal = glm::normalize(contact.contactNormal);
-				contact.restitution = 1;
-				*/
-
-				// Function here to add final particle to the particle list.
-				world.getParticlePool().push_back(totesNew);
-
-				spawnEnabled = false;
-			}
+			world.runPhysics(dT);			
 
 			if(debugI==true) {
 				std::cout << "[DEBUG] - Pool size: " << world.getForcePool().getSize() << std::endl;
@@ -453,9 +314,53 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 	// onClick
-	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		spawnEnabled = true;	
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		std::shared_ptr<particle> fixedPoint(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+		fixedPoint->setPosition(glm::vec3(1.0f, 1.0f, 0.0f));
+
+		std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+		totesNew->setParticleParams(particleType);
+		totesNew->setPosition(glm::vec3(6.5, 0.5f, 0.0f));
+		totesNew->inUse = true;
+
+		glm::vec3 acceleration = totesNew->getAcceleration();
+		std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
+		world.getForcePool().add(totesNew, gpart);
+
+		switch (spring)
+		{
+		case BASIC: {
+
+			std::shared_ptr<particleSpring> springParticle(new particleSpring(fixedPoint, 2.0f, 3.0f));
+			world.getForcePool().add(totesNew, springParticle);
+		}
+				  break;
+		case ANCHOR: {
+			glm::vec3 fixedPos = fixedPoint->getPosition();
+			std::shared_ptr<particleAnchoredSpring> anchoredSpring(new particleAnchoredSpring(fixedPos, 2.0f, 3.0f));
+			world.getForcePool().add(totesNew, anchoredSpring);
+		}
+				   break;
+		case ELASTIC: {
+			std::shared_ptr<particleElasticBungee> elasticBungee(new particleElasticBungee(fixedPoint, 2.0f, 5.0f));
+			world.getForcePool().add(totesNew, elasticBungee);
+		}
+		case NONE:
+			// Do nothing
+			break;
+		}
+		// Testing contacts
+		/*
+		contact._particle[0] = testParticle;
+		contact._particle[1] = totesNew;
+		contact.contactNormal = testParticle->getPosition() - totesNew->getPosition();
+		contact.contactNormal = glm::normalize(contact.contactNormal);
+		contact.restitution = 1;
+		*/
+
+		// Function here to add final particle to the particle list.
+		world.getParticlePool().push_back(totesNew);
 	}
 }
