@@ -43,8 +43,8 @@ void particleWorld::generateContacts() {
 }
 
 void particleWorld::getOverlaps() {
-	for (int i = 0; i < particlePool.size(); i++) {
-		for (int p = i +1 ; p < particlePool.size(); p++) {
+	for (long unsigned int i = 0; i < particlePool.size(); i++) {
+		for (long unsigned int p = i + 1; p < particlePool.size(); p++) {
 			generateParticleContacts(particlePool[i], particlePool[p]);
 		}
 	}
@@ -93,6 +93,14 @@ void particleWorld::runPhysics(float dT) {
 void particleWorld::draw(float dT) {
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
 		particlePool[i]->draw();
+	}
+}
+
+void particleWorld::checkLife(float dT) {
+	for(long unsigned int i = 0; i < particlePool.size(); i++) {
+		if(particlePool[i]->inUse == false && particlePool[i]->dontDelete == false){
+			particlePool.erase(particlePool.begin()+i);
+		}
 	}
 }
 

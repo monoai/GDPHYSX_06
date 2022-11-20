@@ -25,6 +25,7 @@ class particleWorld {
 		void update(float dT);
 		void runPhysics(float dT);
 		void draw(float dT);
+		void checkLife(float dT);
 		void addContact(std::shared_ptr<particle> a, std::shared_ptr<particle> b, float restitution, glm::vec3 vector);
 		particleForcePool& getForcePool();
 		std::vector<std::shared_ptr<particle>>& getParticlePool();

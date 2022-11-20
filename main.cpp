@@ -83,9 +83,6 @@ int main() {
 	glm::mat4 trans = glm::mat4(1.0f); // identity
 	glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
-	// normal stuff
-	glm::mat4 normalTrans = glm::transpose(glm::inverse(trans));
-
 	// define projection matrix
 	glm::mat4 projection = glm::mat4(1.0f);
 
@@ -160,7 +157,8 @@ int main() {
 	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 
 	// Initializing its values
-	for(int i=0; i < boxParticlePool.size(); i++) {
+	for(long unsigned int i=0; i < boxParticlePool.size(); i++) {
+		boxParticlePool[i]->dontDelete = true;
 		boxParticlePool[i]->radius = 5.0f;
 		boxParticlePool[i]->setMass(1.0f);
 		boxParticlePool[i]->setVelocity(glm::vec3(0.0f));
@@ -331,13 +329,13 @@ int main() {
 	rods.reset(new particleRod());
 
 	// Pushing to the world's contact generators
-	for(int i = 0; i < rodsPool.size(); i++) {
+	for(long unsigned int i = 0; i < rodsPool.size(); i++) {
 		//std::cout << "[DEBUG] - BoxParticleA: " << rodsPool[i]->_particle[0] << std::endl;
 		//std::cout << "[DEBUG] - BoxParticleB: " << rodsPool[i]->_particle[1] << std::endl;
 		//std::cout << "[DEBUG] - BoxDistance: " << rodsPool[i]->length << std::endl;
 		world.getContactGenPool().push_back(rodsPool[i]);
 	}
-	for(int i = 0; i < boxParticlePool.size(); i++) {
+	for(long unsigned int i = 0; i < boxParticlePool.size(); i++) {
 		//std::cout << "[DEBUG] - BoxPPosition: " << glm::to_string(boxParticlePool[i]->getPosition()) << std::endl;
 		world.getParticlePool().push_back(boxParticlePool[i]);
 	}
@@ -363,8 +361,6 @@ int main() {
 
 		// Orthographic with corection for stretching, resize window to see difference with previous example
 		//projection = glm::ortho(-ratio, ratio, -1.0f, 1.0f, 0.1f, 10.0f);
-
-		float zoomFactor = 20.0f;
 
 		projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 500.0f);
 
@@ -430,6 +426,7 @@ int main() {
 		world.draw(dT);
 		
 		// Custom draw
+		world.checkLife(dT);
 
 		//--- stop drawing here ---
 #pragma endregion

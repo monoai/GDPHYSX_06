@@ -32,7 +32,7 @@ void particleContact::resolveVel(float dT) {
 
 	//std::cout << "[DEBUG] - AccCausedSepVel: " << glm::to_string(accCausedSepVel) << std::endl;
 
-	/*
+	
 	if(glm::all(glm::lessThan(accCausedSepVel, glm::vec3(0.0f)))) {
 		std::cout << "[DEBUG]: accCausedSepVel not < 0" << std::endl;
 		newSepVel += restitution * glm::length(accCausedSepVel);
@@ -42,7 +42,6 @@ void particleContact::resolveVel(float dT) {
 			newSepVel = 0.0f;
 		}
 	}
-	*/
 
 	float deltaVel = newSepVel - separatingVel;
 
