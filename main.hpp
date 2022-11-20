@@ -21,6 +21,7 @@
 #include "particlefpool.hpp"
 #include "particleworld.hpp"
 #include "particlecontact.hpp"
+#include "particlelink.hpp"
 
 //Shaders
 GLuint skyboxShaderProgram;

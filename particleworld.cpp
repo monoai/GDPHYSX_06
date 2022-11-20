@@ -30,12 +30,18 @@ void particleWorld::generateContacts() {
 	getOverlaps();
 	unsigned limit = contactPool.size();
 
-	for(long unsigned int i = 0; i < contactGenPool.size(); i++) {
-		contactGenPool[i]->addContact(contactPool[i], limit);
-		limit -= 1;
+	//std::cout << "[DEBUG] - ContactPoolCountBefore: " << contactPool.size() << std::endl;
 
-		if(limit <=0) {
-			break;
+	for(long unsigned int i = 0; i < contactGenPool.size(); i++) {
+		if(contactPool.size() > 0) {
+			//std::cout << "[DEBUG] - ContactGenName: " << contactGenPool[i] << std::endl;
+			//std::cout << "[DEBUG] - ContactPoolCountAfter: " << contactPool.size() << std::endl;
+			contactGenPool[i]->addContact(contactPool[i], limit);
+			limit -= 1;
+
+			if(limit <=0) {
+				break;
+			}
 		}
 	}
 }
@@ -53,8 +59,8 @@ void particleWorld::generateParticleContacts(std::shared_ptr<particle> a, std::s
 	float rad = (a->radius + b->radius) * (a->radius + b->radius);
 
 	if (mag <= rad) {
-		float r = rad - mag;
-		float depth = sqrt(r);
+		//float r = rad - mag;
+		//float depth = sqrt(r);
 
 		float restitution = a->restitution;
 		if (b->restitution < restitution) {

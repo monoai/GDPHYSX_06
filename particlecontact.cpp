@@ -16,8 +16,6 @@ float particleContact::calculateSeparatingVel() const {
 void particleContact::resolveVel(float dT) {
 	float separatingVel = calculateSeparatingVel();
 
-	// Maybe try this instead?
-	// if(glm::length2(separatingVel) > 0.0f)
 	if(separatingVel > 0.0f) {
 		std::cout << "[DEBUG]: SeparatingVel not > 0" << std::endl;
 		return;
@@ -31,7 +29,7 @@ void particleContact::resolveVel(float dT) {
 	}
 	glm::vec3 accCausedSepVel = accCausedVel * contactNormal * dT;
 
-	std::cout << "[DEBUG] - AccCausedSepVel: " << glm::to_string(accCausedSepVel) << std::endl;
+	//std::cout << "[DEBUG] - AccCausedSepVel: " << glm::to_string(accCausedSepVel) << std::endl;
 
 	if(glm::all(glm::lessThan(accCausedSepVel, glm::vec3(0.0f)))) {
 		std::cout << "[DEBUG]: accCausedSepVel not < 0" << std::endl;
@@ -105,7 +103,7 @@ void particleContactResolver::resolveContacts(std::vector<std::shared_ptr<partic
 			if(sepVel < max){
 				max = sepVel;
 				maxIndex = i;
-				std::cout << "[DEBUG] - Something got calculated" << std::endl;
+				//std::cout << "[DEBUG] - Something got calculated" << std::endl;
 			}
 		}
 

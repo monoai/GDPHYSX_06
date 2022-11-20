@@ -117,15 +117,203 @@ int main() {
 	// Contact test
 	/*
 	std::shared_ptr<particle> testParticle(new particle(&normalTransformLoc, &modelTransformLoc, planet));
-	testParticle->setPosition(glm::vec3(10.0,0.5f,0.0f));
+	testParticle->setPosition(glm::vec3(50.0,0.0f,0.0f));
 	testParticle->setMass(1.5f);
 
 	world.getParticlePool().push_back(testParticle);
-
+	*/
+	/*
 	particleContact contact = particleContact();
 	contact._particle[0] = testParticle;
 	contact._particle[1] = NULL;
 	*/
+
+	// Making a box out of particles
+	float dist = 50.0f;
+	std::vector<std::shared_ptr<particle>> boxParticlePool;
+	std::shared_ptr<particle> boxParticle(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+
+	// The part where i set position and push new copies into a vector
+	boxParticle->setPosition(glm::vec3(dist+2.5f,-2.5f,2.5f)); //0-A
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+2.5f,-2.5f,-2.5f)); //1-B
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+2.5f,2.5f,2.5f)); //2-C
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+2.5f,2.5f,-2.5f)); //3-D
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+-2.5f,-2.5f,2.5f)); //4-E
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+-2.5f,-2.5f,-2.5f)); //5-F
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+-2.5f,2.5f,2.5f)); //6-G
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	boxParticle->setPosition(glm::vec3(dist+-2.5f,2.5f,-2.5f)); //7-H
+	boxParticlePool.push_back(boxParticle);
+	boxParticle.reset(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+
+	// Initializing its values
+	for(int i=0; i < boxParticlePool.size(); i++) {
+		boxParticlePool[i]->radius = 2.5f;
+		boxParticlePool[i]->setMass(0.1f);
+		boxParticlePool[i]->setVelocity(glm::vec3(10.0f));
+		boxParticlePool[i]->clearForceAccum();
+	}
+
+	// Initializing rods
+	std::vector<std::shared_ptr<particleRod>> rodsPool;
+	std::shared_ptr<particleRod> rods(new particleRod);
+
+	// Vertical Sides
+	rods->_particle[0] = boxParticlePool[0];
+	rods->_particle[1] = boxParticlePool[1];
+	rods->length = glm::distance(boxParticlePool[0]->getPosition(), boxParticlePool[1]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);	
+	rods->_particle[0] = boxParticlePool[2];
+	rods->_particle[1] = boxParticlePool[3];
+	rods->length = glm::distance(boxParticlePool[2]->getPosition(), boxParticlePool[3]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[4];
+	rods->_particle[1] = boxParticlePool[5];
+	rods->length = glm::distance(boxParticlePool[4]->getPosition(), boxParticlePool[5]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[6];
+	rods->_particle[1] = boxParticlePool[7];
+	rods->length = glm::distance(boxParticlePool[6]->getPosition(), boxParticlePool[7]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	// Horizontal Sides
+	// Top
+	rods->_particle[0] = boxParticlePool[0];
+	rods->_particle[1] = boxParticlePool[2];
+	rods->length = glm::distance(boxParticlePool[0]->getPosition(), boxParticlePool[2]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[0];
+	rods->_particle[1] = boxParticlePool[4];
+	rods->length = glm::distance(boxParticlePool[0]->getPosition(), boxParticlePool[4]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[6];
+	rods->_particle[1] = boxParticlePool[2];
+	rods->length = glm::distance(boxParticlePool[6]->getPosition(), boxParticlePool[2]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[6];
+	rods->_particle[1] = boxParticlePool[4];
+	rods->length = glm::distance(boxParticlePool[6]->getPosition(), boxParticlePool[4]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	// Bottom
+	rods->_particle[0] = boxParticlePool[1];
+	rods->_particle[1] = boxParticlePool[3];
+	rods->length = glm::distance(boxParticlePool[1]->getPosition(), boxParticlePool[3]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[1];
+	rods->_particle[1] = boxParticlePool[5];
+	rods->length = glm::distance(boxParticlePool[1]->getPosition(), boxParticlePool[5]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[7];
+	rods->_particle[1] = boxParticlePool[3];
+	rods->length = glm::distance(boxParticlePool[7]->getPosition(), boxParticlePool[3]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[7];
+	rods->_particle[1] = boxParticlePool[5];
+	rods->length = glm::distance(boxParticlePool[7]->getPosition(), boxParticlePool[5]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	// Inbetweens
+	// Sides
+	rods->_particle[0] = boxParticlePool[0];
+	rods->_particle[1] = boxParticlePool[3];
+	rods->length = glm::distance(boxParticlePool[0]->getPosition(), boxParticlePool[3]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[2];
+	rods->_particle[1] = boxParticlePool[1];
+	rods->length = glm::distance(boxParticlePool[2]->getPosition(), boxParticlePool[1]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[0];
+	rods->_particle[1] = boxParticlePool[5];
+	rods->length = glm::distance(boxParticlePool[0]->getPosition(), boxParticlePool[5]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[4];
+	rods->_particle[1] = boxParticlePool[1];
+	rods->length = glm::distance(boxParticlePool[4]->getPosition(), boxParticlePool[1]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	rods->_particle[0] = boxParticlePool[6];
+	rods->_particle[1] = boxParticlePool[3];
+	rods->length = glm::distance(boxParticlePool[6]->getPosition(), boxParticlePool[3]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[2];
+	rods->_particle[1] = boxParticlePool[7];
+	rods->length = glm::distance(boxParticlePool[2]->getPosition(), boxParticlePool[7]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[6];
+	rods->_particle[1] = boxParticlePool[5];
+	rods->length = glm::distance(boxParticlePool[6]->getPosition(), boxParticlePool[5]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[4];
+	rods->_particle[1] = boxParticlePool[7];
+	rods->length = glm::distance(boxParticlePool[4]->getPosition(), boxParticlePool[7]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	// Top/Bottom
+	rods->_particle[0] = boxParticlePool[1];
+	rods->_particle[1] = boxParticlePool[7];
+	rods->length = glm::distance(boxParticlePool[1]->getPosition(), boxParticlePool[7]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[3];
+	rods->_particle[1] = boxParticlePool[5];
+	rods->length = glm::distance(boxParticlePool[3]->getPosition(), boxParticlePool[5]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	rods->_particle[0] = boxParticlePool[0];
+	rods->_particle[1] = boxParticlePool[6];
+	rods->length = glm::distance(boxParticlePool[0]->getPosition(), boxParticlePool[6]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+	rods->_particle[0] = boxParticlePool[2];
+	rods->_particle[1] = boxParticlePool[4];
+	rods->length = glm::distance(boxParticlePool[2]->getPosition(), boxParticlePool[4]->getPosition());
+	rodsPool.push_back(rods);
+	rods.reset(new particleRod);
+
+	// Pushing to the world's contact generators
+	for(int i = 0; i < 24; i++) {
+		std::cout << "[DEBUG] - BoxDistance: " << rodsPool[i]->length << std::endl;
+		world.getContactGenPool().push_back(rodsPool[i]);
+	}
+	for(int i = 0; i < boxParticlePool.size(); i++) {
+		std::cout << "[DEBUG] - BoxPPosition: " << glm::to_string(boxParticlePool[i]->getPosition()) << std::endl;
+		world.getParticlePool().push_back(boxParticlePool[i]);
+	}
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -214,6 +402,8 @@ int main() {
 		// A function here to draw a list of overall particles.
 		world.draw(dT);
 		//world.getForcePool().checkLife();
+		
+		// Custom draw
 
 		//--- stop drawing here ---
 #pragma endregion
@@ -312,6 +502,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 		totesNew->setParticleParams(particleType);
 		totesNew->setPosition(glm::vec3(6.5, 0.5f, 0.0f));
+		totesNew->radius = 5.0f;
 		totesNew->inUse = true;
 
 		glm::vec3 acceleration = totesNew->getAcceleration();
