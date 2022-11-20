@@ -2,6 +2,7 @@
 
 #include "particlecontact.hpp"
 #include <glm/gtx/norm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 void particleWorld::startFrame() {
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
@@ -28,20 +29,15 @@ void particleWorld::addContact(std::shared_ptr<particle> a, std::shared_ptr<part
 void particleWorld::generateContacts() {
 	contactPool.clear();
 	getOverlaps();
-	unsigned limit = contactPool.size();
-
 	//std::cout << "[DEBUG] - ContactPoolCountBefore: " << contactPool.size() << std::endl;
 
 	for(long unsigned int i = 0; i < contactGenPool.size(); i++) {
-		if(contactPool.size() > 0) {
-			//std::cout << "[DEBUG] - ContactGenName: " << contactGenPool[i] << std::endl;
-			//std::cout << "[DEBUG] - ContactPoolCountAfter: " << contactPool.size() << std::endl;
-			contactGenPool[i]->addContact(contactPool[i], limit);
-			limit -= 1;
+		//std::cout << "[DEBUG] - ContactGenName: " << contactGenPool[i] << std::endl;
+		//std::cout << "[DEBUG] - ContactPoolCountAfter: " << contactPool.size() << std::endl;
+		std::shared_ptr<particleContact> newContact = contactGenPool[i]->addContact();
 
-			if(limit <=0) {
-				break;
-			}
+		if(newContact != nullptr) {
+			contactPool.push_back(newContact);
 		}
 	}
 }
@@ -75,6 +71,8 @@ void particleWorld::generateParticleContacts(std::shared_ptr<particle> a, std::s
 void particleWorld::update(float dT) {
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
 		particlePool[i]->update(dT);
+		//std::cout << "[DEBUG] - ParticlePosition: " << glm::to_string(particlePool[i]->getPosition()) << std::endl; 
+		//std::cout << "[DEBUG] - ParticleVelocity: " << glm::to_string(particlePool[i]->getVelocity()) << std::endl;
 	}
 }
 

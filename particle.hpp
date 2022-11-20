@@ -10,7 +10,8 @@
 
 class particle {
 	public:
-		bool inUse;
+		bool inUse = false;
+		bool dontDelete = false;
 		float radius = 1.0f;
 		float restitution = 1.0f;
 		enum particleName {
@@ -55,7 +56,7 @@ class particle {
 		ObjData obj;
 		float inverseMass = 0.0f;
 		float mass = 0.0f;
-		float damping = 0.0f;
+		float damping = 0.99f;
 };
 
 #endif

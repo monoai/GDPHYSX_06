@@ -16,11 +16,11 @@ class particleContact {
 
 		float restitution;
 		glm::vec3 contactNormal;
-		float penetration;
-		void resolve(float dT); //Temporarily on public while code is still being sorted
+		float penetration = 0.0f;
+		//void resolve(float dT); //Temporarily on public while code is still being sorted
 	private:
 		float calculateSeparatingVel() const;
-		//void resolve(float dT);
+		void resolve(float dT);
 		void resolveVel(float dT);
 		void resolveInterpenetration(float dT);
 };
@@ -37,7 +37,7 @@ class particleContactResolver {
 
 class particleContactGen {
 	public:
-		virtual unsigned addContact(std::shared_ptr<particleContact> contact, unsigned limit) const = 0;
+		virtual std::shared_ptr<particleContact> addContact() const = 0;
 };
 
 #endif

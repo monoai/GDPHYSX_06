@@ -48,6 +48,7 @@ int particleForcePool::getSize() {
 	return pool.size();
 }
 
+/*
 void particleForcePool::checkLife() {
 	for(int i = 0; i < this->getSize(); i++) {
 		if(this->pool[i]._particle->inUse == false) {
@@ -55,6 +56,7 @@ void particleForcePool::checkLife() {
 		}
 	}
 }
+*/
 
 void particleForcePool::getContents() {
 	for(int i = 0; i < this->getSize(); i++) {

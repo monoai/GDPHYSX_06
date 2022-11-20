@@ -5,11 +5,13 @@ float particleLink::currentLength() const {
 	return glm::length(relativePos);
 }
 
-unsigned particleCable::addContact(std::shared_ptr<particleContact> contact, unsigned limit) const {
+std::shared_ptr<particleContact> particleCable::addContact() const {
 	float length = currentLength();
 	if (length < maxLength) {
-		return 0;
+		return nullptr;
 	}
+
+	std::shared_ptr<particleContact> contact(new particleContact());
 
 	contact->_particle[0] = _particle[0];
 	contact->_particle[1] = _particle[1];
@@ -20,12 +22,16 @@ unsigned particleCable::addContact(std::shared_ptr<particleContact> contact, uns
 	contact->penetration = length - maxLength;
 	contact->restitution = restitution;
 
-	return 1;
+	return contact;
 }
 
-unsigned particleRod::addContact(std::shared_ptr<particleContact> contact, unsigned limit) const {
+std::shared_ptr<particleContact> particleRod::addContact() const {
 	float _currentLength = currentLength();
-	if (_currentLength == length) return 0;
+	//std::cout << "[DEBUG] - currLength: " << _currentLength << std::endl;
+	//std::cout << "[DEBUG] - length: " << length << std::endl;
+	if (_currentLength == length) return nullptr;
+
+	std::shared_ptr<particleContact> contact(new particleContact());
 
 	contact->_particle[0] = _particle[0];
 	contact->_particle[1] = _particle[1];
@@ -36,13 +42,15 @@ unsigned particleRod::addContact(std::shared_ptr<particleContact> contact, unsig
 	if (_currentLength > length) {
 		contact->contactNormal = _normal;
 		contact->penetration = _currentLength - length;
+		//std::cout << "[DEBUG] - currLength > length" << std::endl;
 	}
 	else {
 		contact->contactNormal = _normal * -1.0f;
 		contact->penetration = length - _currentLength;
+		//std::cout << "[DEBUG] - currLength < length" << std::endl;
 	}
 
-	contact->restitution = 0.5f;
+	contact->restitution = 0;
 
-	return 1;
+	return contact;
 }

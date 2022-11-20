@@ -25,7 +25,7 @@ class particleForcePool {
 		//void update(float dT);
 		void updateForces(float dT);
 		//void draw();
-		void checkLife();
+		//void checkLife();
 		int getSize();
 		void getContents();
 };

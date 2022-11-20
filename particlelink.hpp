@@ -8,7 +8,7 @@ class particleLink : public particleContactGen
 {
 	public:
 		std::shared_ptr<particle> _particle[2];
-		virtual unsigned addContact(std::shared_ptr<particleContact> contact, unsigned limit) const = 0;
+		virtual std::shared_ptr<particleContact> addContact() const = 0;
 	protected:
 		float currentLength() const;
 };
@@ -18,7 +18,7 @@ class particleCable : public particleLink {
 		float maxLength;
 		float restitution;
 
-		virtual unsigned addContact(std::shared_ptr<particleContact> contact, unsigned limit) const;
+		virtual std::shared_ptr<particleContact> addContact() const;
 
 };
 
@@ -26,7 +26,7 @@ class particleRod : public particleLink {
 	public:
 		float length;
 
-		virtual unsigned addContact(std::shared_ptr<particleContact> contact, unsigned limit) const;
+		virtual std::shared_ptr<particleContact> addContact() const;
 };
 
 #endif
