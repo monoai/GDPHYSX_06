@@ -160,6 +160,7 @@
     <ClInclude Include="particlecontact.hpp" />
     <ClInclude Include="particlefgen.hpp" />
     <ClInclude Include="particlefpool.hpp" />
+    <ClInclude Include="particlelink.hpp" />
     <ClInclude Include="particleworld.hpp" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="skybox.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="particlecontact.cpp" />
     <ClCompile Include="particlefgen.cpp" />
     <ClCompile Include="particlefpool.cpp" />
+    <ClCompile Include="particlelink.cpp" />
     <ClCompile Include="particleworld.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
