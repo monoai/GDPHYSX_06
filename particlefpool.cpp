@@ -2,8 +2,9 @@
 
 #include "obj_mesh.h"
 
-void particleForcePool::add(std::shared_ptr<particle>_particle, std::shared_ptr<particleForceGen>_fg) {
+void particleForcePool::add(std::shared_ptr<particle>_particle, std::shared_ptr<particleForceGen>_fg, std::string _name) {
 	particleForcePooler newPool;
+	newPool._name = _name;
 	newPool._particle = _particle;
 	newPool._fg = _fg;
 	
@@ -11,9 +12,9 @@ void particleForcePool::add(std::shared_ptr<particle>_particle, std::shared_ptr<
 	//std::cout << "pool pushed" << std::endl;
 }
 
-void particleForcePool::remove(std::shared_ptr<particle>_particle, std::shared_ptr<particleForceGen>_fg) {
+void particleForcePool::remove(std::shared_ptr<particle>_particle, std::shared_ptr<particleForceGen>_fg, std::string name) {
 	for(int i = 0; i < this->getSize(); i++) {
-		if(this->pool[i]._particle == _particle) {
+		if(this->pool[i]._particle == _particle && this->pool[i]._fg == _fg  && this->pool[i]._name == name) {
 			this->pool.erase(pool.begin()+i);
 			return;
 		}
@@ -62,5 +63,21 @@ void particleForcePool::getContents() {
 	for(int i = 0; i < this->getSize(); i++) {
 		std::cout << "Pool [" << i << "] Particle - " << this->pool[i]._particle << std::endl;
 		std::cout << "Pool [" << i << "] ForceGen - " << this->pool[i]._fg << std::endl;
+	}
+}
+
+void particleForcePool::changePlanet(std::shared_ptr<particle> other) {
+	for(int i = 0; i < this->getSize(); i++) {
+		if(this->pool[i]._name == "pGravity") {
+			this->pool[i]._particle->changePlanet(other);
+		}
+	}
+}
+
+void particleForcePool::changeLimit(float amt) {
+	for(int i = 0; i < this->getSize(); i++) {
+		if(this->pool[i]._name == "pGravity") {
+			this->pool[i]._particle->changeLimit(amt);
+		}
 	}
 }

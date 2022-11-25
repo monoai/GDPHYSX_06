@@ -192,6 +192,14 @@ void particle::setMass(float mass) {
 	this->inverseMass = (1.0f)/mass;
 }
 
+void particle::setInverseMass(float mass) {
+	this->inverseMass = mass;
+}
+
+float particle::getPlanetaryMass() {
+	return (1.0f)/this->planetaryMass;
+}
+
 /* [getPosition FUNCTION]
  * Returns the mass which is actually the calculated 
  * version of the inverseMass.
@@ -220,4 +228,23 @@ glm::vec3 particle::getVelocity() {
  */
 glm::vec3 particle::getAcceleration() {
 	return this->acceleration;
+}
+
+void particle::changePlanet(std::shared_ptr<particle> other) {
+	this->other = other;
+}
+
+void particle::changeLimit(float amt) {
+	this->distLimit += amt;
+}
+
+bool particle::planetExists() {
+	if(this->other != NULL) {
+		return true;
+	}
+	return false;
+}
+
+std::shared_ptr<particle> particle::getPlanet() {
+	return this->other;
 }

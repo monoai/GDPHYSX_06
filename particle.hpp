@@ -7,6 +7,7 @@
 #include <glm/matrix.hpp>
 
 #include "obj_mesh.h"
+#include <memory>
 
 class particle {
 	public:
@@ -32,9 +33,21 @@ class particle {
 		float getInverseMass();
 		void setMass(float mass);
 		float getMass();
+		float getPlanetaryMass();
+		void setInverseMass(float mass);
 		void setVelocity(glm::vec3 newVel);
 		glm::vec3 getVelocity();
 		glm::vec3 getAcceleration();
+
+		// Planet variables
+		void changePlanet(std::shared_ptr<particle> other);
+		void changeLimit(float amt);
+		bool planetExists();
+		std::shared_ptr<particle> getPlanet();
+
+		// Planet properties
+		float distLimit = 50.0f;
+		float planetaryMass = 1.0f;
 	private:
 		// Transformation variables
 		glm::mat4 trans;
@@ -57,6 +70,9 @@ class particle {
 		float inverseMass = 0.0f;
 		float mass = 0.0f;
 		float damping = 0.99f;
+
+		// Planet properties
+		std::shared_ptr<particle> other = NULL;
 };
 
 #endif

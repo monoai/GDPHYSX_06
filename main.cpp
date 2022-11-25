@@ -126,6 +126,7 @@ int main() {
 	*/
 
 	// Making a box out of particles
+	/*
 	float dist = 50.0f;
 	std::vector<std::shared_ptr<particle>> boxParticlePool;
 	std::shared_ptr<particle> boxParticle(new particle(&normalTransformLoc, &modelTransformLoc, planet));
@@ -236,7 +237,7 @@ int main() {
 	rodsPool.push_back(rods);
 	rods.reset(new particleRod());
 
-	/*
+	///*
 	// Inbetweens
 	// Inner
 	rods->_particle[0] = boxParticlePool[0];
@@ -259,9 +260,9 @@ int main() {
 	rods->length = glm::distance(boxParticlePool[2]->getPosition(), boxParticlePool[5]->getPosition());
 	rodsPool.push_back(rods);
 	rods.reset(new particleRod());
-	*/
+	//*/
 
-	
+	/*
 	// Sides
 	rods->_particle[0] = boxParticlePool[0];
 	rods->_particle[1] = boxParticlePool[3];
@@ -339,6 +340,25 @@ int main() {
 		//std::cout << "[DEBUG] - BoxPPosition: " << glm::to_string(boxParticlePool[i]->getPosition()) << std::endl;
 		world.getParticlePool().push_back(boxParticlePool[i]);
 	}
+
+	*/
+
+	std::shared_ptr<particle> _planet1(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	planet1 = _planet1;
+	planet1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	planet1->dontDelete = true;
+	planet1->setMass(999.0f);
+	planet1->radius = 2.5f;
+
+	std::shared_ptr<particle> _planet2(new particle(&normalTransformLoc, &modelTransformLoc, planet));
+	planet2 = _planet2;
+	planet2->setPosition(glm::vec3(30.0f, 0.0f, 0.0f));
+	planet2->dontDelete = true;
+	planet2->setMass(999.0f);
+	planet2->radius = 2.5f;
+
+	world.getParticlePool().push_back(planet1);
+	world.getParticlePool().push_back(planet2);
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -426,7 +446,7 @@ int main() {
 		world.draw(dT);
 		
 		// Custom draw
-		world.checkLife(dT);
+		//world.checkLife(dT);
 
 		//--- stop drawing here ---
 #pragma endregion
@@ -508,11 +528,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	//DEBUG KEYS
 	if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		std::cout << "[DEBUG] - Pool size: " << world.getForcePool().getSize() << std::endl;
+		std::cout << "Planet1" << std::endl;
+		world.getForcePool().changePlanet(planet1);
 	}
 	if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-		std::cout << "[DEBUG] - Pool contents: ";
-		world.getForcePool().getContents();
+		std::cout << "Planet2" << std::endl;
+		world.getForcePool().changePlanet(planet2);
+	}
+	if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+		distLimit += 1.0f;
+		std::cout << "[DEBUG] - DistLimit: " << distLimit << std::endl;
+		world.getForcePool().changeLimit(1.0f);
+	}
+	if(glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+		distLimit += -1.0f;
+		std::cout << "[DEBUG] - DistLimit: " << distLimit << std::endl;
+		world.getForcePool().changeLimit(-1.0f);
 	}
 }
 
@@ -524,12 +555,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 		std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 		totesNew->setParticleParams(particleType);
-		totesNew->setPosition(glm::vec3(25.5, 0.0f, 0.0f));
+		totesNew->setPosition(glm::vec3(20.0f, 0.0f, 0.0f));
 		totesNew->radius = 1.0f;
 		totesNew->inUse = true;
-		totesNew->setMass(2.5f);
+		totesNew->setMass(20.5f);
+		totesNew->distLimit = distLimit;
 
-		glm::vec3 acceleration = totesNew->getAcceleration();
+		//glm::vec3 acceleration = totesNew->getAcceleration();
+		glm::vec3 acceleration = glm::vec3(0.0f, -9.81, 0.0f);
 		std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
 		world.getForcePool().add(totesNew, gpart);
 
@@ -555,6 +588,12 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			// Do nothing
 			break;
 		}
+
+		std::shared_ptr<particlePlanetaryGravity> pGravity(new particlePlanetaryGravity(totesNew));
+		std::string name = "pGravity";
+		world.getForcePool().add(totesNew, pGravity, name);
+
+		//unqCount++;
 		// Testing contacts
 		/*
 		contact._particle[0] = testParticle;

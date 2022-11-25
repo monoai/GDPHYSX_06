@@ -61,4 +61,15 @@ class particleElasticBungee : public particleForceGen
 		float restLength;
 };
 
+class particlePlanetaryGravity : public particleForceGen
+{
+	public:
+		particlePlanetaryGravity(std::shared_ptr<particle> main, std::shared_ptr<particle> other = NULL);
+		void changePlanet(std::shared_ptr<particle> other);
+		void changeLimit(float amt);
+		virtual void updateForce(std::shared_ptr<particle> particle, float duration);
+
+		std::shared_ptr<particle> main = NULL;
+};
+
 #endif

@@ -89,3 +89,22 @@ void particleElasticBungee::updateForce(std::shared_ptr<particle> particle, floa
 	force *= magnitude;
 	particle->addForce(force);
 }
+
+particlePlanetaryGravity::particlePlanetaryGravity(std::shared_ptr<particle> main, std::shared_ptr<particle> other) : main(main) {
+	this->main->changePlanet(other);
+}
+
+void particlePlanetaryGravity::updateForce(std::shared_ptr<particle> particle, float duration) {
+	if(this->main->planetExists() != false && glm::distance(this->main->getPosition(), this->main->getPlanet()->getPosition()) <= this->main->distLimit) {
+		std::cout << "PGRAVITY FORCE CALCULATING" << std::endl;
+		glm::vec3 force = glm::vec3(0.0f);
+		glm::vec3 distance = this->main->getPosition() - this->main->getPlanet()->getPosition();
+		float distanceMag = glm::length(distance);
+		float distanceSqr = glm::dot(distance, distance);
+
+		force += -9.81*(((this->main->getMass() * this->main->getPlanet()->getMass())/std::abs(distanceSqr)));
+		force *= glm::normalize(distance);
+
+		particle->addForce(force);
+	}
+}

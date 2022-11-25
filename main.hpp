@@ -67,3 +67,9 @@ glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 // World variables
 // particleForcePool particlepool;
 particleWorld world;
+
+// Custom unique variables
+std::shared_ptr<particle> planet1;
+std::shared_ptr<particle> planet2;
+float distLimit = 50.0f;
+int unqCount;
