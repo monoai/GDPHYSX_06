@@ -345,16 +345,18 @@ int main() {
 
 	std::shared_ptr<particle> _planet1(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 	planet1 = _planet1;
-	planet1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	planet1->setPosition(glm::vec3(10.0f, 0.0f, 0.0f));
 	planet1->dontDelete = true;
-	planet1->setMass(999.0f);
+	planet1->setInverseMass(0.0f);
+	planet1->planetaryMass = (1.0f)/350.0f;
 	planet1->radius = 2.5f;
 
 	std::shared_ptr<particle> _planet2(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 	planet2 = _planet2;
 	planet2->setPosition(glm::vec3(30.0f, 0.0f, 0.0f));
 	planet2->dontDelete = true;
-	planet2->setMass(999.0f);
+	planet2->setInverseMass(0.0f);
+	planet2->planetaryMass = (1.0f)/350.0f;
 	planet2->radius = 2.5f;
 
 	world.getParticlePool().push_back(planet1);
@@ -558,7 +560,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		totesNew->setPosition(glm::vec3(20.0f, 0.0f, 0.0f));
 		totesNew->radius = 1.0f;
 		totesNew->inUse = true;
-		totesNew->setMass(20.5f);
+		totesNew->setMass(2.5f);
 		totesNew->distLimit = distLimit;
 
 		//glm::vec3 acceleration = totesNew->getAcceleration();

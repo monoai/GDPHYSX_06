@@ -102,7 +102,7 @@ void particlePlanetaryGravity::updateForce(std::shared_ptr<particle> particle, f
 		float distanceMag = glm::length(distance);
 		float distanceSqr = glm::dot(distance, distance);
 
-		force += -9.81*(((this->main->getMass() * this->main->getPlanet()->getMass())/std::abs(distanceSqr)));
+		force += -9.81*(((this->main->getMass() * this->main->getPlanet()->getPlanetaryMass())/std::abs(distanceSqr)));
 		force *= glm::normalize(distance);
 
 		particle->addForce(force);
