@@ -138,6 +138,13 @@ void particle::setParticleParams(particleName name) {
 
 }
 
+bool particle::isDestroyed() {
+	if(inUse == false && dontDelete == false) {
+		return true;
+	}
+	return false;
+}
+
 /* [addForce FUNCTION]
  * The function where the accumulated force
  * that was calculated elsewhere will be added

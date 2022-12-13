@@ -424,10 +424,6 @@ int main() {
 
 		// A function here to draw a list of overall particles.
 		world.draw(dT);
-		
-		// Custom draw
-		world.checkLife(dT);
-
 		//--- stop drawing here ---
 #pragma endregion
 

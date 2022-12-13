@@ -24,6 +24,7 @@ class particle {
 		void update(float dT);
 		void clearForceAccum();
 		void addForce(glm::vec3 force);
+		bool isDestroyed();
 		void setParticleParams(particleName name);
 
 		void setPosition(glm::vec3 vector);

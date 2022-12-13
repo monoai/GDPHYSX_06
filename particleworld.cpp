@@ -3,6 +3,7 @@
 #include "particlecontact.hpp"
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <algorithm>
 
 void particleWorld::startFrame() {
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
@@ -69,6 +70,8 @@ void particleWorld::generateParticleContacts(std::shared_ptr<particle> a, std::s
 }
 
 void particleWorld::update(float dT) {
+	this->checkLife();
+
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
 		particlePool[i]->update(dT);
 		//std::cout << "[DEBUG] - ParticlePosition: " << glm::to_string(particlePool[i]->getPosition()) << std::endl; 
@@ -96,12 +99,19 @@ void particleWorld::draw(float dT) {
 	}
 }
 
-void particleWorld::checkLife(float dT) {
+void particleWorld::checkLife() {
 	for(long unsigned int i = 0; i < particlePool.size(); i++) {
-		if(particlePool[i]->inUse == false && particlePool[i]->dontDelete == false){
+		if(particlePool[i]->isDestroyed() == true){
 			particlePool.erase(particlePool.begin()+i);
 		}
 	}
+
+	/* Alternative way of erasing, doesn't work because requires another function it seems.
+	particlePool.erase(
+		std::remove_if(particlePool.begin(), particlePool.end(), isDestroyed),
+		particlePool.end()
+	);
+	*/
 }
 
 particleForcePool& particleWorld::getForcePool(){
