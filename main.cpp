@@ -342,6 +342,13 @@ int main() {
 		world.getParticlePool().push_back(boxParticlePool[i]);
 	}
 
+	///* Testing rigidbodies
+	std::shared_ptr<rigidBody> test(new rigidBody(&normalTransformLoc, &modelTransformLoc, planet));
+	test->setPosition(glm::vec3(35.5f, 0.0f, 0.0f));
+	//test->calculateDerivedData();
+	test->inUse = true;
+	rbodyWorld.getRBodyPool().push_back(test);
+
 	while (!glfwWindowShouldClose(window)) {
 
 #pragma region Viewport
@@ -441,13 +448,8 @@ int main() {
 		*/
 
 		///* Testing rigidbodies
-		std::shared_ptr<rigidBody> test(new rigidBody(&normalTransformLoc, &modelTransformLoc, planet));
-		test->setPosition(glm::vec3(35.5f, 0.0f, 0.0f));
-		test->addForceAtPoint(glm::vec3(200.0f, 0.0f, 0.0f), glm::vec3(1.0f,0.0f,0.0f));
-		//std::cout << "currPos: " << glm::to_string(test->getPosition()) << std::endl;
-		test->calculateDerivedData();
-		test->inUse = true;
-		rbodyWorld.getRBodyPool().push_back(test);
+		test->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(1.0f,0.0f,0.0f));
+		std::cout << "currPos: " << glm::to_string(test->getPosition()) << std::endl;
 		//*/
 		//--- stop drawing here ---
 #pragma endregion

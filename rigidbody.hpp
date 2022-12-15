@@ -65,7 +65,7 @@ class rigidBody {
 		float damping = 0.99f;
 		float angularDamping = 0.99f;
 		float angularVelocity;
-		glm::vec3 rotation = glm::vec3(0.0f);
+		glm::vec3 rotation = glm::vec3(1.0f);
 		glm::quat orientation;
 
 		glm::mat3 inverseInertiaTensor;

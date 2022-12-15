@@ -2,6 +2,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 #include <glm/ext/quaternion_geometric.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
@@ -39,8 +40,10 @@ void rigidBody::draw() {
 	//std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
 	this->trans = glm::translate(this->trans, position);
 	// [DEBUG]
-	//std::cout << "draw trans after translate: " << glm::to_string(this->trans) << std::endl;
-	this->trans = glm::rotate(this->trans, glm::radians(1.0f), rotation);
+	//std::cout << "draw trans after translate: " << glm::to_string(this->trans) << std::endl
+	glm::mat4 rotMat = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+	this->trans = this->trans * rotMat;
+	//this->trans = glm::rotate(this->trans, glm::radians(1.0f), rotation);
 	// [DEBUG]
 	//std::cout << "draw trans after rotate: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
@@ -61,6 +64,8 @@ void rigidBody::draw() {
 
 
 void rigidBody::update(float dT) {
+	if(!isUpdate) return;
+
 	lastFrameAcceleration = this->acceleration;
 	lastFrameAcceleration += forceAccum * inverseMass;
 
@@ -76,10 +81,10 @@ void rigidBody::update(float dT) {
 
 	this->position += velocity * dT;
 
-	this->orientation = glm::rotate(this->orientation, dT, this->rotation);
+	// Find a way to convert a rotation vector multiplied with dT into a quaternion
+	this->orientation = this->orientation * (this->rotation * dT);
 
-	this->velocity *= pow(damping, dT);
-	this->rotation *= pow(angularDamping, dT);
+	std::cout << "rotate: " << glm::to_string(this->rotation) << std::endl;
 
 	// calculateDerivedData();
 	
