@@ -6,7 +6,6 @@
 #include <cmath>
 
 particle::particle(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
-	this->trans = glm::mat4(1.0f);
 	this->obj = object;
 	//std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
 }
@@ -51,18 +50,19 @@ void particle::draw() {
 	glBindVertexArray(obj.vaoId);
 	// [DEBUG]
 	//std::cout << "draw trans: " << glm::to_string(this->trans) << std::endl;
-	this->trans = glm::mat4(1.0f);
+	this->trans = glm::mat4(1.0f); // Resets transMatrix to identity just in case.
 	// [DEBUG]
 	//std::cout << "currPos: " << glm::to_string(this->positionVector) << std::endl;
 	this->trans = glm::translate(this->trans, position);
-	//this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(0.0f,0.0f,0.0f));
+	// [DEBUG]
+	//std::cout << "draw trans after translate: " << glm::to_string(this->trans) << std::endl;
+	this->trans = glm::rotate(this->trans, glm::radians(0.0f), glm::vec3(1.0f,1.0f,1.0f));
+	// [DEBUG]
+	//std::cout << "draw trans after rotate: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
 	
 	glm::mat4 normalTransLoc = glm::transpose(glm::inverse(this->trans));
 	glUniformMatrix4fv(this->normalTrans, 1, GL_FALSE, glm::value_ptr(normalTransLoc));
-	normalTransLoc = glm::transpose(glm::inverse(this->trans));
-	glUniformMatrix4fv(this->normalTrans, 1, GL_FALSE, glm::value_ptr(normalTransLoc));
-	//glUniformMatrix4fv(*modelTransformLoc, 1, GL_FALSE, glm::value_ptr(this->trans));
 	glUniformMatrix4fv(this->modelTrans, 1, GL_FALSE, glm::value_ptr(this->trans));
 	// Applying textures to the object if there are any detected.
 	glActiveTexture(GL_TEXTURE0);

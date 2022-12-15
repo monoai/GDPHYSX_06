@@ -1,5 +1,7 @@
 #include "main.hpp"
 
+#include <glm/gtx/string_cast.hpp>
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
@@ -410,8 +412,10 @@ int main() {
 			
 		while(accumulator >= dT) {
 			world.startFrame(); // Redundant due to particles already clearing forceAccum after calculation, but this is a sure (segurista) way.
+			rbodyWorld.startFrame();
 			
-			world.runPhysics(dT);			
+			world.runPhysics(dT);
+			rbodyWorld.runPhysics(dT);
 
 			t += dT;
 			accumulator -= dT;
@@ -424,6 +428,27 @@ int main() {
 
 		// A function here to draw a list of overall particles.
 		world.draw(dT);
+		rbodyWorld.draw(dT);
+
+		/* Just in case I need to test inheritances and stuff
+		rigidBody *test = new rigidBody(&normalTransformLoc, &modelTransformLoc, planet);
+		test->setPosition(glm::vec3(25.5, 0.0f, 0.0f));
+		test->radius = 1.0f;
+		test->inUse = true;
+		test->setMass(4.5f);
+		std::cout << "Mass: " << test->getMass() << std::endl;
+		test->draw();
+		*/
+
+		///* Testing rigidbodies
+		std::shared_ptr<rigidBody> test(new rigidBody(&normalTransformLoc, &modelTransformLoc, planet));
+		test->setPosition(glm::vec3(35.5f, 0.0f, 0.0f));
+		test->addForceAtPoint(glm::vec3(200.0f, 0.0f, 0.0f), glm::vec3(1.0f,0.0f,0.0f));
+		//std::cout << "currPos: " << glm::to_string(test->getPosition()) << std::endl;
+		test->calculateDerivedData();
+		test->inUse = true;
+		rbodyWorld.getRBodyPool().push_back(test);
+		//*/
 		//--- stop drawing here ---
 #pragma endregion
 

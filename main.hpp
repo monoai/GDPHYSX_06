@@ -22,6 +22,8 @@
 #include "particleworld.hpp"
 #include "particlecontact.hpp"
 #include "particlelink.hpp"
+#include "rigidbody.hpp"
+#include "rigidbodyworld.hpp"
 
 //Shaders
 GLuint skyboxShaderProgram;
@@ -67,3 +69,4 @@ glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 // World variables
 // particleForcePool particlepool;
 particleWorld world;
+rigidWorld rbodyWorld;

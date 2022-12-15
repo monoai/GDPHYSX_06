@@ -14,6 +14,7 @@ class particle {
 		bool dontDelete = false;
 		float radius = 1.0f;
 		float restitution = 1.0f;
+
 		enum particleName {
 			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
 		};
@@ -38,7 +39,7 @@ class particle {
 		glm::vec3 getAcceleration();
 	private:
 		// Transformation variables
-		glm::mat4 trans;
+		glm::mat4 trans = glm::mat4(1.0f);
 		GLuint& normalTrans;
 		GLuint& modelTrans;
 

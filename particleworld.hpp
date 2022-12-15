@@ -11,7 +11,6 @@
 
 class particleWorld {
 	private:
-		bool calculateIterations;
 		std::vector<std::shared_ptr<particle>> particlePool;
 		particleForcePool forcePool;
 		std::vector<std::shared_ptr<particleContactGen>> contactGenPool;
