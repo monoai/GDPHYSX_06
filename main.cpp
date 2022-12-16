@@ -448,7 +448,7 @@ int main() {
 		*/
 
 		///* Testing rigidbodies
-		test->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(1.0f,0.0f,0.0f));
+		test->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(5000.0f,250.0f,0.0f));
 		std::cout << "currPos: " << glm::to_string(test->getPosition()) << std::endl;
 		//*/
 		//--- stop drawing here ---

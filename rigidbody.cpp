@@ -199,3 +199,11 @@ glm::vec3 rigidBody::getVelocity() {
 glm::vec3 rigidBody::getAcceleration() {
 	return this->acceleration;
 }
+
+void rigidBody::setType(int _type) {
+	this->rbodyType = _type;
+}
+
+int rigidBody::getType() {
+	return this->rbodyType;
+}

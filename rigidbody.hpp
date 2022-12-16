@@ -12,6 +12,9 @@
 class rigidBody {
 	public:
 		bool inUse = false;
+		int rbodyType = 0; // 0=circle, 1=box
+		float radius = 1.0f;
+		float restitution = 1.0f;
 		rigidBody(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
 
 		void calculateDerivedData();
@@ -37,6 +40,8 @@ class rigidBody {
 		void setVelocity(glm::vec3 newVel);
 		glm::vec3 getVelocity();
 		glm::vec3 getAcceleration();
+		void setType(int type);
+		int getType();
 
 	private:
 		// Transformation variables
