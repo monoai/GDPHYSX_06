@@ -15,6 +15,10 @@ class rigidBody {
 		int rbodyType = 0; // 0=circle, 1=box
 		float radius = 1.0f;
 		float restitution = 1.0f;
+		enum rbodyName {
+			UNKNOWN, PISTOL, ARTILLERY, FIREBALL, LASER, FIREWORK
+		};
+
 		rigidBody(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object);
 
 		void calculateDerivedData();
@@ -26,6 +30,7 @@ class rigidBody {
 		void addForce(glm::vec3 force); // Done for formality
 		void addForceAtBodyPoint(glm::vec3 force, glm::vec3 point);
 		void addForceAtPoint(glm::vec3 force, glm::vec3 point);
+		void setGunParams(rbodyName name);
 
 		void setInertiaTensor(glm::mat3 inertiaTensor);
 		glm::vec3 getPointInLocalSpace(glm::vec3 point);
@@ -42,6 +47,7 @@ class rigidBody {
 		glm::vec3 getAcceleration();
 		void setType(int type);
 		int getType();
+		void setUpdate(bool status);
 
 	private:
 		// Transformation variables
@@ -70,7 +76,7 @@ class rigidBody {
 		float damping = 0.99f;
 		float angularDamping = 0.99f;
 		float angularVelocity;
-		glm::vec3 rotation = glm::vec3(1.0f);
+		glm::vec3 rotation = glm::vec3(0.1f);
 		glm::quat orientation;
 
 		glm::mat3 inverseInertiaTensor;

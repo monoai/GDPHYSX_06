@@ -82,9 +82,6 @@ void rigidBodyWorld::generateRigidContactsMixed(std::shared_ptr<rigidBody> a, st
 	float rad = (a->radius + b->radius) * (a->radius + b->radius);
 
 	if (mag <= rad) {
-		//float r = rad - mag;
-		//float depth = sqrt(r);
-
 		float restitution = a->restitution;
 		if (b->restitution < restitution) {
 			restitution = b->restitution;
@@ -92,6 +89,8 @@ void rigidBodyWorld::generateRigidContactsMixed(std::shared_ptr<rigidBody> a, st
 		//std::cout << "[DEBUG] - NameApreadd: " << a << std::endl;
 		//std::cout << "[DEBUG] - NameBpreadd: " << b << std::endl;
 		addContact(a,b, restitution,glm::normalize(a->getPosition() - b->getPosition()));
+		a->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(5000.0f,250.0f,0.0f));
+		b->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(5000.0f,250.0f,0.0f));
 	}
 }
 

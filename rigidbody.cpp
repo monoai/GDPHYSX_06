@@ -10,6 +10,9 @@
 rigidBody::rigidBody(GLuint* normalTransformLoc, GLuint* modelTransformLoc, ObjData object) : normalTrans(*normalTransformLoc), modelTrans(*modelTransformLoc) {
 	this->obj = object;
 	//std::cout << "init trans: " << glm::to_string(this->trans) << std::endl;
+	if(rbodyType == 1) {
+		this->radius = 20.0f;
+	}
 }
 
 // Might not need to use these 2 (3?) functions.
@@ -41,9 +44,10 @@ void rigidBody::draw() {
 	this->trans = glm::translate(this->trans, position);
 	// [DEBUG]
 	//std::cout << "draw trans after translate: " << glm::to_string(this->trans) << std::endl
-	glm::mat4 rotMat = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+	glm::mat4 rotMat = glm::mat4_cast(this->orientation);
+	//glm::mat4 rotMat = glm::eulerAngleXYZ(orientation.x, orientation.y, orientation.z);
 	this->trans = this->trans * rotMat;
-	//this->trans = glm::rotate(this->trans, glm::radians(1.0f), rotation);
+	//this->trans = glm::rotate(this->trans, glm::radians(1.0f), glm::vec3(1.0f,1.0f,1.0f));
 	// [DEBUG]
 	//std::cout << "draw trans after rotate: " << glm::to_string(this->trans) << std::endl;
 	this->trans = glm::scale(this->trans, glm::vec3(1.0f,1.0f,1.0f));
@@ -84,7 +88,7 @@ void rigidBody::update(float dT) {
 	// Find a way to convert a rotation vector multiplied with dT into a quaternion
 	this->orientation = this->orientation * (this->rotation * dT);
 
-	std::cout << "rotate: " << glm::to_string(this->rotation) << std::endl;
+	//std::cout << "rotate: " << glm::to_string(this->rotation) << std::endl;
 
 	// calculateDerivedData();
 	
@@ -114,6 +118,64 @@ void rigidBody::addForceAtPoint(glm::vec3 force, glm::vec3 point) {
 
 	isUpdate = true;
 }
+
+void rigidBody::setGunParams(rbodyName name) {
+
+	switch (name)
+	{
+	case PISTOL:
+		this->velocity = glm::vec3(35.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, -1.0f, 0.0f);
+
+		this->setMass(2.0f);
+		this->damping = 0.99f;
+		std::cout << "Pistol set" << std::endl;
+		break;
+	case ARTILLERY:
+		this->velocity = glm::vec3(40.0f, 30.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+
+		this->setMass(200.0f);
+		this->damping = 0.99f;
+		std::cout << "Artillery set" << std::endl;
+		break;
+	case FIREBALL:
+		this->velocity = glm::vec3(10.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, 0.6f, 0.0f);
+
+		this->setMass(1.0f);
+		this->damping = 0.99f;
+		std::cout << "Fireball set" << std::endl;
+		break;
+	case LASER:
+
+		this->velocity = glm::vec3(100.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		this->setMass(0.1f);
+		this->damping = 0.99f;
+		std::cout << "Laser set" << std::endl;
+		break;
+	case FIREWORK:
+		this->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		this->acceleration = glm::vec3(0.0f, 0.3f, 0.0f);
+
+		std::cout << "Firework set" << std::endl;
+		break;
+	
+	default:
+
+		this->velocity = glm::vec3(0.0f);
+		this->acceleration = glm::vec3(0.0f);
+
+		this->setMass(0.0f);
+		this->damping = 0.0f;
+		std::cout << "Unknown particle. Setting to 0" << std::endl;
+		break;
+	}
+
+}
+
 
 void rigidBody::setInertiaTensor(glm::mat3 inertiaTensor) {
 	glm::inverse(inertiaTensor);
@@ -206,4 +268,8 @@ void rigidBody::setType(int _type) {
 
 int rigidBody::getType() {
 	return this->rbodyType;
+}
+
+void rigidBody::setUpdate(bool status) {
+	this->isUpdate = status;
 }

@@ -47,6 +47,14 @@ int main() {
 		earthOffsets
 	);
 
+	mesh.LoadObjFile(&box, "crate/crate1.obj");
+	GLfloat boxOffsets[] = { 0.0f, 0.0f, 0.0f };
+	mesh.LoadObjToMemory(
+		&box,
+		6.0f,
+		boxOffsets
+	);
+
 	// Load Skybox Model
 	std::vector<std::string> faces{
 		"right.png",
@@ -128,6 +136,7 @@ int main() {
 	*/
 
 	// Making a box out of particles
+	/*
 	float dist = 50.0f;
 	std::vector<std::shared_ptr<particle>> boxParticlePool;
 	std::shared_ptr<particle> boxParticle(new particle(&normalTransformLoc, &modelTransformLoc, planet));
@@ -237,6 +246,7 @@ int main() {
 	rods->length = glm::distance(boxParticlePool[7]->getPosition(), boxParticlePool[5]->getPosition());
 	rodsPool.push_back(rods);
 	rods.reset(new particleRod());
+	*/
 
 	/*
 	// Inbetweens
@@ -263,7 +273,7 @@ int main() {
 	rods.reset(new particleRod());
 	*/
 
-	
+	/*
 	// Sides
 	rods->_particle[0] = boxParticlePool[0];
 	rods->_particle[1] = boxParticlePool[3];
@@ -341,13 +351,17 @@ int main() {
 		//std::cout << "[DEBUG] - BoxPPosition: " << glm::to_string(boxParticlePool[i]->getPosition()) << std::endl;
 		world.getParticlePool().push_back(boxParticlePool[i]);
 	}
+	*/
 
 	///* Testing rigidbodies
-	std::shared_ptr<rigidBody> test(new rigidBody(&normalTransformLoc, &modelTransformLoc, planet));
-	test->setPosition(glm::vec3(35.5f, 0.0f, 0.0f));
-	//test->calculateDerivedData();
-	test->inUse = true;
-	rbodyWorld.getRBodyPool().push_back(test);
+	std::shared_ptr<rigidBody> boxObj(new rigidBody(&normalTransformLoc, &modelTransformLoc, box));
+	boxObj->setPosition(glm::vec3(35.5f, 0.0f, 0.0f));
+	boxObj->setMass(15.0f);
+	boxObj->setType(1); // Assures it's a box object.
+	boxObj->setUpdate(true);
+	//boxObj->calculateDerivedData();
+	boxObj->inUse = true;
+	rbodyWorld.getRBodyPool().push_back(boxObj);
 
 	while (!glfwWindowShouldClose(window)) {
 
@@ -438,18 +452,18 @@ int main() {
 		rbodyWorld.draw(dT);
 
 		/* Just in case I need to test inheritances and stuff
-		rigidBody *test = new rigidBody(&normalTransformLoc, &modelTransformLoc, planet);
-		test->setPosition(glm::vec3(25.5, 0.0f, 0.0f));
-		test->radius = 1.0f;
-		test->inUse = true;
-		test->setMass(4.5f);
-		std::cout << "Mass: " << test->getMass() << std::endl;
-		test->draw();
+		rigidBody *boxObj = new rigidBody(&normalTransformLoc, &modelTransformLoc, planet);
+		boxObj->setPosition(glm::vec3(25.5, 0.0f, 0.0f));
+		boxObj->radius = 1.0f;
+		boxObj->inUse = true;
+		boxObj->setMass(4.5f);
+		std::cout << "Mass: " << boxObj->getMass() << std::endl;
+		boxObj->draw();
 		*/
 
 		///* Testing rigidbodies
-		test->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(5000.0f,250.0f,0.0f));
-		std::cout << "currPos: " << glm::to_string(test->getPosition()) << std::endl;
+		//boxObj->addForceAtPoint(glm::vec3(400.0f, 0.0f, 0.0f), glm::vec3(5000.0f,250.0f,0.0f));
+		//std::cout << "currPos: " << glm::to_string(boxObj->getPosition()) << std::endl;
 		//*/
 		//--- stop drawing here ---
 #pragma endregion
@@ -487,7 +501,7 @@ int main() {
  * Reverts all global variables of a particle to 0.0f 
  */
 void resetValues() {
-	particleType = particle::UNKNOWN;
+	gunType = rigidBody::UNKNOWN;
 }
 
 /* [User Inputs FUNCTIONS]
@@ -497,19 +511,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	// 1 - Pistol
 	if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
-		particleType = particle::PISTOL;
+		gunType = rigidBody::PISTOL;
 	}
 	// 2 - Artillery
 	if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-		particleType = particle::ARTILLERY;
+		gunType = rigidBody::ARTILLERY;
 	}
 	// 3 - Fireball
 	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
-		particleType = particle::FIREBALL;
+		gunType = rigidBody::FIREBALL;
 	}
 	// 4 - Laser
 	if(glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
-		particleType = particle::LASER;
+		gunType = rigidBody::LASER;
 	}
 	// 5 - Fireworks
 	if(glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS) {
@@ -545,17 +559,19 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		std::shared_ptr<particle> fixedPoint(new particle(&normalTransformLoc, &modelTransformLoc, planet));
 		fixedPoint->setPosition(glm::vec3(1.0f, 1.0f, 0.0f));
 
-		std::shared_ptr<particle> totesNew(new particle(&normalTransformLoc, &modelTransformLoc, planet));
-		totesNew->setParticleParams(particleType);
+		std::shared_ptr<rigidBody> totesNew(new rigidBody(&normalTransformLoc, &modelTransformLoc, planet));
+		totesNew->setGunParams(gunType);
 		totesNew->setPosition(glm::vec3(25.5, 0.0f, 0.0f));
-		totesNew->radius = 1.0f;
+		totesNew->radius = 2.5f;
 		totesNew->inUse = true;
-		totesNew->setMass(2.5f);
+		totesNew->setUpdate(true);
+		totesNew->setMass(1.5f);
 
-		glm::vec3 acceleration = totesNew->getAcceleration();
-		std::shared_ptr<particleGravity> gpart(new particleGravity(acceleration));
-		world.getForcePool().add(totesNew, gpart);
+		//glm::vec3 acceleration = totesNew->getAcceleration();
+		//std::shared_ptr<rigidGravity> gpart(new rigidGravity(acceleration));
+		//rbodyWorld.getForcePool().add(totesNew, gpart);
 
+		/* Don't bother about springs anymore.
 		switch (spring)
 		{
 		case BASIC: {
@@ -578,6 +594,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			// Do nothing
 			break;
 		}
+		*/
 		// Testing contacts
 		/*
 		contact._particle[0] = testParticle;
@@ -588,6 +605,6 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		*/
 
 		// Function here to add final particle to the particle list.
-		world.getParticlePool().push_back(totesNew);
+		rbodyWorld.getRBodyPool().push_back(totesNew);
 	}
 }

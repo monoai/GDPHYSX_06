@@ -23,6 +23,7 @@
 #include "particlecontact.hpp"
 #include "particlelink.hpp"
 #include "rigidbody.hpp"
+#include "rigidbodyfgen.hpp"
 #include "rigidbodyworld.hpp"
 
 //Shaders
@@ -41,6 +42,7 @@ GLuint ambientColorLoc;
 //ObjMesh Related
 obj_mesh mesh;
 ObjData planet;
+ObjData box;
 SkyboxData skybox;
 
 // Global variables
@@ -51,7 +53,7 @@ bool debugP = false;
 // Enum Declaration
 enum springType { NONE, BASIC, ANCHOR, ELASTIC };
 springType spring;
-particle::particleName particleType = particle::particleName::PISTOL;
+rigidBody::rbodyName gunType = rigidBody::rbodyName::PISTOL;
 
 // var for Time
 double currentTime = glfwGetTime();
