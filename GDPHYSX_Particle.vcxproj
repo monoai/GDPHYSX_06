@@ -162,6 +162,10 @@
     <ClInclude Include="particlefpool.hpp" />
     <ClInclude Include="particlelink.hpp" />
     <ClInclude Include="particleworld.hpp" />
+    <ClInclude Include="rigidbody.hpp" />
+    <ClInclude Include="rigidbodycontact.hpp" />
+    <ClInclude Include="rigidbodyfgen.hpp" />
+    <ClInclude Include="rigidbodyworld.hpp" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="stb_image.h" />
@@ -176,6 +180,10 @@
     <ClCompile Include="particlefpool.cpp" />
     <ClCompile Include="particlelink.cpp" />
     <ClCompile Include="particleworld.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
+    <ClCompile Include="rigidbodycontact.cpp" />
+    <ClCompile Include="rigidbodyfgen.cpp" />
+    <ClCompile Include="rigidbodyworld.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
